@@ -2,7 +2,7 @@
 #
 # Install and configure IOP services
 #
-class iop_advisor_engine (
+class iop (
 ) {
   include iop::core_engine
   include iop::core_ingress

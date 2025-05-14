@@ -9,7 +9,7 @@
 # $ensure:: Ensure service is present or absent
 #
 class iop::core_engine (
-  String[1] $image = '',
+  String[1] $image = 'fill-this-in',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
@@ -32,7 +32,7 @@ class iop::core_engine (
         ],
       },
       'Container' => {
-        'Image'         => 'quay.io/cloudservices/insights-engine:latest',
+        'Image'         => $image,
         'ContainerName' => 'iop-core-engine',
         'Environment'   => [
           'EVENTS_TOPIC=platform.inventory.events',

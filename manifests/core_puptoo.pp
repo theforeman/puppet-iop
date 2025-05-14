@@ -9,7 +9,7 @@
 # $ensure:: Ensure service is present or absent
 #
 class iop::core_puptoo (
-  String[1] $image = '',
+  String[1] $image = 'fill-this-in',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
