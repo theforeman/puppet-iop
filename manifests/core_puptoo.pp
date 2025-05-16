@@ -9,7 +9,7 @@
 # $ensure:: Ensure service is present or absent
 #
 class iop::core_puptoo (
-  String[1] $image = 'fill-this-in',
+  String[1] $image = 'quay.io/iop/puptoo:latest',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
@@ -27,11 +27,10 @@ class iop::core_puptoo (
         'Image'         => $image,
         'ContainerName' => 'iop-core-puptoo',
         'Environment'   => [
-          'LOG_LEVEL=INFO',
-          'BOOTSTRAP_SERVERS=iop-core-kafka:9092', # Assumes 'iop-core-kafka' is resolvable.
+          'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
           'INVENTORY_TOPIC=platform.inventory.host-ingress',
           'HABERDASHER_EMITTER=stderr',
-          'HABERDASHER_KAFKA_BOOTSTRAP=iop-core-kafka:9092', # Assumes 'iop-core-kafka' is resolvable.
+          'HABERDASHER_KAFKA_BOOTSTRAP=iop-core-kafka:9092',
           'HABERDASHER_KAFKA_TOPIC=platform.logging.logs',
           'KAFKA_LOGGER=ERROR',
           'DISABLE_REDIS=True',
