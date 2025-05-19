@@ -27,12 +27,7 @@ class iop::core_puptoo (
         'Image'         => $image,
         'ContainerName' => 'iop-core-puptoo',
         'Environment'   => [
-          'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
-          'INVENTORY_TOPIC=platform.inventory.host-ingress',
-          'HABERDASHER_EMITTER=stderr',
-          'HABERDASHER_KAFKA_BOOTSTRAP=iop-core-kafka:9092',
-          'HABERDASHER_KAFKA_TOPIC=platform.logging.logs',
-          'KAFKA_LOGGER=ERROR',
+          'BOOTSTRAP_SERVERS=iop-core-kafka:9092', # Assumes 'iop-core-kafka' is resolvable.
           'DISABLE_REDIS=True',
           'DISABLE_S3_UPLOAD=True',
         ],
