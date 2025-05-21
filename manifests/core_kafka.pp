@@ -13,7 +13,7 @@ class iop::core_kafka (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
-  include iop::core_network
+  require iop::core_network
 
   podman::secret { 'iop-core-kafka-init-start':
     ensure => $ensure,
@@ -49,6 +49,10 @@ class iop::core_kafka (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
+    require      => [
+      File['/var/lib/kafka/data'],
+      Podman::Network['iop-core-network']
+    ],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Kafka Container',
@@ -78,13 +82,16 @@ class iop::core_kafka (
         'WantedBy' => ['multi-user.target', 'default.target'],
       },
     },
-    require      => [File['/var/lib/kafka/data'], Podman::Network['iop-core-network']],
   }
 
-  Exec { 'Run kafka init':
+  Exec { 'kafka-init':
     command => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --create",
     unless  => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --check",
-    require => Podman::Quadlet['iop-core-kafka'],
+    require => [
+      Podman::Quadlet['iop-core-kafka'],
+      Podman::Network['iop-core-network'],
+      Podman::Secret['iop-core-kafka-init']
+    ],
     path    => ['/usr/bin', '/usr/sbin'],
   }
 }

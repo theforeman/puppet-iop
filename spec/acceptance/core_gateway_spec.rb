@@ -15,17 +15,17 @@ describe 'basic installation' do
     it_behaves_like 'an idempotent resource' do
       let(:manifest) do
         <<-PUPPET
-        include iop::core_puptoo
+        class { 'iop::core_gateway': }
         PUPPET
       end
     end
 
-    describe service('iop-core-puptoo') do
+    describe service('iop-core-gateway') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
+    describe command('curl http://localhost:24443/') do
       its(:exit_status) { should eq 0 }
     end
   end

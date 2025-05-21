@@ -13,12 +13,14 @@ class iop::core_puptoo (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
+  require iop::core_network
 
   podman::quadlet { 'iop-core-puptoo':
     ensure       => $ensure,
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
+    require      => Podman::Network['iop-core-network'],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Puptoo Container',
@@ -26,6 +28,7 @@ class iop::core_puptoo (
       'Container' => {
         'Image'         => $image,
         'ContainerName' => 'iop-core-puptoo',
+        'Network'       => 'iop-core-network',
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092', # Assumes 'iop-core-kafka' is resolvable.
           'DISABLE_REDIS=True',
