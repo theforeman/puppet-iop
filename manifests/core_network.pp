@@ -11,9 +11,13 @@ class iop::core_network (
 ) {
   include podman
 
+  $subnet = '10.130.0.0/24'
+  $gateway = '10.130.0.1'
+
   podman::network { 'iop-core-network':
-    ensure => $ensure,
-    driver => 'bridge',
-    subnet => '10.130.0.0/24',
+    ensure  => $ensure,
+    driver  => 'bridge',
+    subnet  => $subnet,
+    gateway => $gateway,
   }
 }

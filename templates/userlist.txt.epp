@@ -1,0 +1,5 @@
+<%- |
+  String[1] $inventory_database_user,
+  String[1] $inventory_database_password,
+| -%>
+"<%= $inventory_database_user %>" "<%= $inventory_database_password %>"
