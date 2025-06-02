@@ -24,7 +24,7 @@ class iop::core_host_inventory (
   include podman
   include iop::core_network
   include iop::core_kafka
-  include iop::pgbouncer
+  include iop::database
 
   # Prevents errors if run from /root etc.
   Postgresql_psql {
@@ -60,8 +60,8 @@ class iop::core_host_inventory (
         'Network'       => 'iop-core-network',
         'Exec'          => 'make upgrade_db && exec make run_inv_mq_service',
         'Environment'   => [
-          'INVENTORY_DB_HOST=iop-pgbouncer',
-          'INVENTORY_DB_PORT=6432',
+          'INVENTORY_DB_HOST=/var/run/postgresql/',
+          'INVENTORY_DB_PORT=5432',
           "INVENTORY_DB_NAME=${database_name}",
           "INVENTORY_DB_USER=${database_user}",
           "INVENTORY_DB_PASS=${database_password}",
@@ -69,9 +69,9 @@ class iop::core_host_inventory (
           'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
-      },
-      'Service'   => {
-        'Restart' => 'always',
+        'Volume'        => [
+          '/var/run/postgresql:/var/run/postgresql:rw',
+        ],
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
@@ -98,8 +98,8 @@ class iop::core_host_inventory (
         'Network'       => 'iop-core-network',
         'Exec'          => 'python run_gunicorn.py',
         'Environment'   => [
-          'INVENTORY_DB_HOST=iop-pgbouncer',
-          'INVENTORY_DB_PORT=6432',
+          'INVENTORY_DB_HOST=/var/run/postgresql/',
+          'INVENTORY_DB_PORT=5432',
           "INVENTORY_DB_NAME=${database_name}",
           "INVENTORY_DB_USER=${database_user}",
           "INVENTORY_DB_PASS=${database_password}",
@@ -108,6 +108,9 @@ class iop::core_host_inventory (
           'BYPASS_RBAC=true',
           'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
+        ],
+        'Volume'        => [
+          '/var/run/postgresql:/var/run/postgresql:rw',
         ],
       },
       'Service'   => {

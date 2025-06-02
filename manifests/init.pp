@@ -4,7 +4,6 @@
 #
 class iop (
 ) {
-  include iop::core_kafka
   include iop::core_ingress
   include iop::core_puptoo
   include iop::core_yuptoo
