@@ -9,4 +9,5 @@ class iop (
   include iop::core_yuptoo
   include iop::core_gateway
   include iop::core_host_inventory
+  include iop::service_vmaas
 }
