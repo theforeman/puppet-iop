@@ -25,6 +25,15 @@ class iop::service_vmaas (
   include iop::core_network
   include iop::core_kafka
   include iop::database
+  include certs::iop_advisor_engine
+
+  $service_name = 'iop-service-vmaas-reposcan'
+  $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
+
+  podman::secret { $server_ca_cert_secret_name:
+    ensure => $ensure,
+    path   => $certs::iop_advisor_engine::server_ca_cert,
+  }
 
   # Prevents errors if run from /root etc.
   Postgresql_psql {
@@ -57,6 +66,7 @@ class iop::service_vmaas (
       Podman::Network['iop-core-network'],
       File['/var/lib/vmaas'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$server_ca_cert_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -82,10 +92,14 @@ class iop::service_vmaas (
           'SYNC_CSAF=no',
           'SYNC_RELEASES=no',
           'SYNC_RELEASE_GRAPH=no',
+          'KATELLO_HOST=host.containers.internal',
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
           '/var/lib/vmaas:/data:z',
+        ],
+        'Secret'        => [
+          "${server_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
         ],
       },
       'Install'   => {
