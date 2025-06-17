@@ -1,6 +1,7 @@
 ---
 fixtures:
   repositories:
+    apache: 'https://github.com/puppetlabs/puppetlabs-apache'
     certs: "https://github.com/theforeman/puppet-certs.git"
     concat: 'https://github.com/puppetlabs/puppetlabs-concat'
     extlib: 'https://github.com/voxpupuli/puppet-extlib'
