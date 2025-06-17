@@ -33,12 +33,6 @@ class iop::service_vmaas (
 
   include postgresql::client, postgresql::server
 
-  postgresql::server::role { $database_user:
-    ensure        => $ensure,
-    password_hash => postgresql::postgresql_password($database_user, $database_password),
-    createrole    => true,
-  }
-
   postgresql::server::db { $database_name:
     user     => $database_user,
     password => postgresql::postgresql_password($database_user, $database_password),
@@ -72,7 +66,7 @@ class iop::service_vmaas (
         'Image'         => $image,
         'ContainerName' => 'iop-service-vmaas-reposcan',
         'Network'       => 'iop-core-network',
-        'Exec'          => 'sh -c "python3.12 -m vmaas.reposcan.database.upgrade && /vmaas/entrypoint.sh reposcan"',
+        'Exec'          => '/vmaas/entrypoint.sh database-upgrade reposcan',
         'Environment'   => [
           'POSTGRESQL_HOST=/var/run/postgresql',
           'POSTGRESQL_PORT=5432',
@@ -119,7 +113,6 @@ class iop::service_vmaas (
         'Image'         => $image,
         'ContainerName' => 'iop-service-vmaas-webapp-go',
         'Network'       => 'iop-core-network',
-        #'Exec'          => 'sh -c "python3.12 -m vmaas.reposcan.database.upgrade && /vmaas/entrypoint.sh webapp-go"',
         'Exec'          => '/vmaas/entrypoint.sh webapp-go',
         'Environment'   => [
           'POSTGRESQL_HOST=/var/run/postgresql',
