@@ -37,16 +37,6 @@ class iop::core_gateway (
     path   => $certs::iop_advisor_engine::server_ca_cert,
   }
 
-  podman::secret { "${service_name}-common-conf":
-    ensure => $ensure,
-    secret => Sensitive(file('iop/gateway/common.conf')),
-  }
-
-  podman::secret { "${service_name}-nginx-conf":
-    ensure => $ensure,
-    secret => Sensitive(file('iop/gateway/nginx.conf')),
-  }
-
   podman::quadlet { 'iop-core-gateway':
     ensure       => $ensure,
     quadlet_type => 'container',
@@ -58,8 +48,6 @@ class iop::core_gateway (
         $server_cert_secret_name,
         $server_key_secret_name,
         $server_ca_cert_secret_name,
-        "${service_name}-common-conf",
-        "${service_name}-nginx-conf",
       ],
     ],
     settings     => {
@@ -74,8 +62,6 @@ class iop::core_gateway (
           '127.0.0.1:24443:8443',
         ],
         'Secret'        => [
-          "${service_name}-nginx-conf,target=/etc/nginx/nginx.conf,uid=998,gid=998",
-          "${service_name}-common-conf,target=/etc/nginx/common.conf,uid=998,gid=998",
           "${server_cert_secret_name},target=/etc/nginx/certs/nginx.crt,mode=0440,type=mount,uid=998,gid=998",
           "${server_key_secret_name},target=/etc/nginx/certs/nginx.key,mode=0440,type=mount,uid=998,gid=998",
           "${server_ca_cert_secret_name},target=/etc/nginx/certs/ca.crt,mode=0440,type=mount,uid=998,gid=998",
