@@ -167,7 +167,7 @@ class iop::core_host_inventory (
     },
   }
 
-  podman::quadlet { 'iop-core-host-inventory-web':
+  podman::quadlet { 'iop-core-host-inventory-api':
     ensure       => $ensure,
     quadlet_type => 'container',
     user         => 'root',
@@ -182,7 +182,7 @@ class iop::core_host_inventory (
       },
       'Container' => {
         'Image'         => $image,
-        'ContainerName' => 'iop-core-host-inventory-web',
+        'ContainerName' => 'iop-core-host-inventory-api',
         'Network'       => 'iop-core-network',
         'Exec'          => 'python run_gunicorn.py',
         'Environment'   => [
