@@ -25,12 +25,12 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe service('iop-core-host-inventory-web') do
+    describe service('iop-core-host-inventory-api') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory curl http://iop-core-host-inventory-web:8081/health') do
+    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory curl http://iop-core-host-inventory-api:8081/health') do
       its(:exit_status) { should eq 0 }
     end
   end
