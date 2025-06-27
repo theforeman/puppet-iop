@@ -92,7 +92,7 @@ class iop::service_vmaas (
           'SYNC_CSAF=no',
           'SYNC_RELEASES=no',
           'SYNC_RELEASE_GRAPH=no',
-          'KATELLO_HOST=host.containers.internal',
+          'KATELLO_URL=http://iop-core-gateway:9090',
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
