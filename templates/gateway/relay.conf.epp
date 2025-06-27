@@ -1,0 +1,9 @@
+<%- |
+  String[1] $foreman_servername,
+| -%>
+# (REQUIRED) CName of the Foreman instance (must match Foreman's TLS certificate)
+proxy_ssl_name "<%= $foreman_servername %>";
+
+# URI to forman
+# Example of host.containers.internal is the container network gateway.
+proxy_pass "https://host.containers.internal";
