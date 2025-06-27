@@ -4,11 +4,14 @@
 #
 # === Parameters:
 #
-# $image::  The container image
+# $foreman_servername:: FQDN of the Foreman server
 #
-# $ensure:: Ensure service is present or absent
+# $image::              The container image
+#
+# $ensure::             Ensure service is present or absent
 #
 class iop::core_gateway (
+  Stdlib::Fqdn $foreman_servername = $facts['networking']['fqdn'],
   String[1] $image = 'quay.io/iop/gateway',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
@@ -17,6 +20,7 @@ class iop::core_gateway (
   include certs::iop_advisor_engine
 
   $service_name = 'iop-core-gateway'
+  $relay_conf_secret_name = "${service_name}-relay-conf"
 
   $server_cert_secret_name = "${service_name}-server-cert"
   $server_key_secret_name = "${service_name}-server-key"
@@ -57,6 +61,13 @@ class iop::core_gateway (
     path   => $certs::foreman_proxy::foreman_ssl_ca_cert,
   }
 
+  podman::secret { $relay_conf_secret_name:
+    ensure => $ensure,
+    secret => Sensitive(
+      epp('iop/gateway/relay.conf.epp', { 'foreman_servername' => $foreman_servername }),
+    ),
+  }
+
   podman::quadlet { 'iop-core-gateway':
     ensure       => $ensure,
     quadlet_type => 'container',
@@ -88,6 +99,7 @@ class iop::core_gateway (
           "${client_cert_secret_name},target=/etc/nginx/smart-proxy-relay/certs/proxy.crt,mode=0440,type=mount,uid=998,gid=998",
           "${client_key_secret_name},target=/etc/nginx/smart-proxy-relay/certs/proxy.key,mode=0440,type=mount,uid=998,gid=998",
           "${client_ca_cert_secret_name},target=/etc/nginx/smart-proxy-relay/certs/ca.crt,mode=0440,type=mount,uid=998,gid=998",
+          "${relay_conf_secret_name},target=/etc/nginx/smart-proxy-relay/relay.conf,mode=0440,type=mount,uid=998,gid=998",
         ],
       },
       'Service'   => {
