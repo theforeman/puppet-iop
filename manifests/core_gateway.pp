@@ -22,6 +22,11 @@ class iop::core_gateway (
   $server_key_secret_name = "${service_name}-server-key"
   $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
 
+  # Client certificates for Smart Proxy Relay
+  $client_cert_secret_name = "${service_name}-client-cert"
+  $client_key_secret_name = "${service_name}-client-key"
+  $client_ca_cert_secret_name = "${service_name}-client-ca-cert"
+
   podman::secret { $server_cert_secret_name:
     ensure => $ensure,
     path   => $certs::iop_advisor_engine::server_cert,
@@ -35,6 +40,21 @@ class iop::core_gateway (
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
     path   => $certs::iop_advisor_engine::server_ca_cert,
+  }
+
+  podman::secret { $client_cert_secret_name:
+    ensure => $ensure,
+    path   => $certs::foreman_proxy::foreman_ssl_cert,
+  }
+
+  podman::secret { $client_key_secret_name:
+    ensure => $ensure,
+    path   => $certs::foreman_proxy::foreman_ssl_key,
+  }
+
+  podman::secret { $client_ca_cert_secret_name:
+    ensure => $ensure,
+    path   => $certs::foreman_proxy::foreman_ssl_ca_cert,
   }
 
   podman::quadlet { 'iop-core-gateway':
@@ -65,6 +85,9 @@ class iop::core_gateway (
           "${server_cert_secret_name},target=/etc/nginx/certs/nginx.crt,mode=0440,type=mount,uid=998,gid=998",
           "${server_key_secret_name},target=/etc/nginx/certs/nginx.key,mode=0440,type=mount,uid=998,gid=998",
           "${server_ca_cert_secret_name},target=/etc/nginx/certs/ca.crt,mode=0440,type=mount,uid=998,gid=998",
+          "${client_cert_secret_name},target=/etc/nginx/smart-proxy-relay/certs/proxy.crt,mode=0440,type=mount,uid=998,gid=998",
+          "${client_key_secret_name},target=/etc/nginx/smart-proxy-relay/certs/proxy.key,mode=0440,type=mount,uid=998,gid=998",
+          "${client_ca_cert_secret_name},target=/etc/nginx/smart-proxy-relay/certs/ca.crt,mode=0440,type=mount,uid=998,gid=998",
         ],
       },
       'Service'   => {
