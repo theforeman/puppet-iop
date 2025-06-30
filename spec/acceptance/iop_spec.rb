@@ -19,14 +19,19 @@ describe 'basic installation' do
           ensure => directory,
         }
 
-        file { '/var/lib/foreman/assets':
+        file { '/var/lib/foreman/public':
           ensure => directory,
           require => File['/var/lib/foreman'],
         }
 
-        file { '/var/lib/foreman/assets/apps':
+        file { '/var/lib/foreman/public/assets':
           ensure => directory,
-          require => File['/var/lib/foreman/assets'],
+          require => File['/var/lib/foreman/public'],
+        }
+
+        file { '/var/lib/foreman/public/assets/apps':
+          ensure => directory,
+          require => File['/var/lib/foreman/public/assets'],
         }
 
         include foreman::config::apache
