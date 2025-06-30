@@ -15,6 +15,22 @@ describe 'basic installation' do
     it_behaves_like 'an idempotent resource' do
       let(:manifest) do
         <<-PUPPET
+        file { '/var/lib/foreman':
+          ensure => directory,
+        }
+
+        file { '/var/lib/foreman/assets':
+          ensure => directory,
+          require => File['/var/lib/foreman'],
+        }
+
+        file { '/var/lib/foreman/assets/apps':
+          ensure => directory,
+          require => File['/var/lib/foreman/assets'],
+        }
+
+        include foreman::config::apache
+
         class { 'iop': }
         PUPPET
       end
