@@ -1,0 +1,10 @@
+<%- | String $timer_interval | -%>
+[Unit]
+Description=Timer for cvemap.xml download
+
+[Timer]
+OnBootSec=1h
+OnUnitActiveSec=<%= $timer_interval %>
+
+[Install]
+WantedBy=timers.target
