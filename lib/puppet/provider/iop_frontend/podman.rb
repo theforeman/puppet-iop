@@ -31,6 +31,7 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     destroy if File.directory?(resource[:destination])
 
+    FileUtils.chmod_R(0755, @staged_content_path)
     Puppet.debug("Moving staged content from '#{@staged_content_path}' to '#{resource[:destination]}'")
     FileUtils.mv(@staged_content_path, resource[:destination])
 
