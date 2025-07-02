@@ -52,7 +52,7 @@ class iop::service_vmaas (
 
   file { '/var/lib/vmaas':
     ensure => directory,
-    mode   => '0755',
+    mode   => '0775',
     owner  => 'root',
     group  => 'root',
   }
@@ -96,7 +96,7 @@ class iop::service_vmaas (
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
-          '/var/lib/vmaas:/data:z',
+          '/var/lib/vmaas:/data:rw,z',
         ],
         'Secret'        => [
           "${server_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
