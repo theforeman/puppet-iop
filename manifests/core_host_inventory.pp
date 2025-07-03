@@ -69,12 +69,12 @@ class iop::core_host_inventory (
       stale_timestamp + INTERVAL '1' DAY * '14' AS culled_timestamp,
       tags_alt as tags,
       system_profile_facts as system_profile,
-      (canonical_facts ->> 'inventory_id')::uuid as inventory_id,
+      (canonical_facts ->> 'insights_id')::uuid as insights_id,
       reporter,
       per_reporter_staleness,
       org_id,
       groups
-    FROM hbi.hosts WHERE (canonical_facts->'inventory_id' IS NOT NULL);
+    FROM hbi.hosts WHERE (canonical_facts->'insights_id' IS NOT NULL);
     | EOM
 
   postgresql_psql { 'create_or_replace_remote_view_inventory_hosts':
