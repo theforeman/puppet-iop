@@ -9,65 +9,109 @@ describe 'basic installation' do
     on default, 'podman secret rm --all'
     on default, 'podman network rm iop-core-network --force'
     on default, 'dnf -y remove postgres*'
+    on default, 'dnf -y remove foreman*'
+    on default, 'rm -rf /root/ssl-build'
   end
 
-  shared_examples 'foreman directory setup' do
-    let(:foreman_setup) do
-      <<-PUPPET
-      file { '/var/lib/foreman':
-        ensure => directory,
-      }
-
-      file { '/var/lib/foreman/public':
-        ensure => directory,
-        require => File['/var/lib/foreman'],
-      }
-
-      file { '/var/lib/foreman/public/assets':
-        ensure => directory,
-        require => File['/var/lib/foreman/public'],
-      }
-
-      file { '/var/lib/foreman/public/assets/apps':
-        ensure => directory,
-        require => File['/var/lib/foreman/public/assets'],
-      }
-
-      file { '/usr/share/foreman':
-        ensure => directory,
-      }
-
-      file { '/usr/share/foreman/public':
-        ensure => link,
-        target => '/var/lib/foreman/public',
-        require => [File['/usr/share/foreman'], File['/var/lib/foreman/public']],
-      }
-
-      include foreman::config::apache
-      PUPPET
-    end
-  end
-
-  context 'with default parameters (vulnerability and advisor enabled)' do
-    include_examples 'foreman directory setup'
-
+  context 'with basic parameters' do
     it_behaves_like 'an idempotent resource' do
       let(:manifest) do
         <<-PUPPET
-        #{foreman_setup}
+        file { '/var/lib/foreman':
+          ensure => directory,
+        }
+
+        file { '/var/lib/foreman/public':
+          ensure => directory,
+          require => File['/var/lib/foreman'],
+        }
+
+        file { '/var/lib/foreman/public/assets':
+          ensure => directory,
+          require => File['/var/lib/foreman/public'],
+        }
+
+        include foreman::config::apache
 
         class { 'iop': }
         PUPPET
       end
     end
 
-    # Core services should always be running
+    describe command('curl http://localhost:24443/') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command('podman run --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command('podman run --network=iop-core-network quay.io/iop/yuptoo curl http://iop-core-yuptoo:5005/') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command('podman run --network=iop-core-network quay.io/iop/ingress curl http://iop-core-ingress:8080/') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command('curl http://localhost:24443/api/ingress') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory:latest curl http://iop-core-host-inventory:9126/') do
+      its(:exit_status) { should eq 0 }
+    end
+
     describe service('iop-core-host-inventory-api') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
 
-    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.crt --key /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
+    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/localhost/localhost-iop-core-gateway-client.crt --key /root/ssl-build/localhost/localhost-iop-core-gateway-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
+      its(:stdout) { should match /200/ }
+    end
+  end
+
+  context 'when registering as a smartproxy' do
+    before(:context) do
+      # Ensure foreman-installer-katello is installer prior
+      # katello would pull it in, but it purges the candlepin caches
+      # config/katello.migrations/231003142402-reset-store-credentials.rb
+      on hosts, <<~SKIP_INSTALLER_MIGRATION
+      applied=/etc/foreman-installer/scenarios.d/katello-migrations-applied
+      migration=231003142402-reset-store-credentials.rb
+      if ! grep -q $migration $applied 2> /dev/null ; then
+        mkdir -p $(dirname $applied)
+        echo "- $migration" >> $applied
+      fi
+      SKIP_INSTALLER_MIGRATION
+    end
+
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        include katello
+
+        package { 'rubygem-foreman_rh_cloud':
+          ensure => present,
+        }
+
+        Package['rubygem-foreman_rh_cloud'] -> Class['foreman::database']
+        Package['rubygem-foreman_rh_cloud'] ~> Class['foreman::service']
+
+        class { 'iop':
+          register_as_smartproxy => true,
+        }
+        PUPPET
+      end
+    end
+
+    describe service('iop-core-gateway') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
+    end
+
+    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/localhost/localhost-iop-core-gateway-client.crt --key /root/ssl-build/localhost/localhost-iop-core-gateway-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
       its(:stdout) { should match /200/ }
     end
 
@@ -91,7 +135,6 @@ describe 'basic installation' do
       its(:stdout) { should match /200/ }
     end
 
-    # Vulnerability services should be running
     describe service('iop-service-vuln-manager') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
@@ -102,7 +145,6 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    # Advisor services should be running
     describe service('iop-service-advisor-backend-service') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }

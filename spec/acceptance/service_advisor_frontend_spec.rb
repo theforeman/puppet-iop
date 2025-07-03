@@ -9,6 +9,7 @@ describe 'basic installation' do
     on default, 'podman secret rm --all'
     on default, 'podman network rm iop-core-network --force'
     on default, 'dnf -y remove postgres*'
+    on default, 'dnf -y remove foreman*'
   end
 
   context 'with basic parameters' do
