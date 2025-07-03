@@ -9,6 +9,8 @@ describe 'basic installation' do
     on default, 'podman secret rm --all'
     on default, 'podman network rm iop-core-network --force'
     on default, 'dnf -y remove postgres*'
+    on default, 'dnf -y remove foreman*'
+    on default, 'rm -rf /root/ssl-build'
   end
 
   context 'with basic parameters' do
@@ -25,7 +27,7 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.crt --key /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
+    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/localhost/localhost-iop-core-gateway-client.crt --key /root/ssl-build/localhost/localhost-iop-core-gateway-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
       its(:stdout) { should match /200/ }
     end
   end

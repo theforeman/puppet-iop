@@ -2,10 +2,12 @@
 fixtures:
   repositories:
     apache: 'https://github.com/puppetlabs/puppetlabs-apache'
-    certs: "https://github.com/theforeman/puppet-certs.git"
+    candlepin:     "https://github.com/theforeman/puppet-candlepin.git"
+    certs: 'https://github.com/theforeman/puppet-certs'
     concat: 'https://github.com/puppetlabs/puppetlabs-concat'
     extlib: 'https://github.com/voxpupuli/puppet-extlib'
-    foreman:       "https://github.com/theforeman/puppet-foreman.git"
+    foreman: 'https://github.com/theforeman/puppet-foreman'
+    katello:       "https://github.com/theforeman/puppet-katello.git"
     hashfile: "https://github.com/southalc/hashfile"
     redis:         "https://github.com/voxpupuli/puppet-redis"
     podman:

@@ -25,14 +25,14 @@ class iop::service_vmaas (
   include iop::core_network
   include iop::core_kafka
   include iop::database
-  include certs::iop_advisor_engine
+  include certs::iop
 
   $service_name = 'iop-service-vmaas-reposcan'
   $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
 
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::iop_advisor_engine::server_ca_cert,
+    path   => $certs::iop::server_ca_cert,
   }
 
   # Prevents errors if run from /root etc.

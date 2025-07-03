@@ -17,7 +17,7 @@ class iop::core_gateway (
 ) {
   include podman
   require iop::core_network
-  include certs::iop_advisor_engine
+  include certs::iop
 
   $service_name = 'iop-core-gateway'
   $relay_conf_secret_name = "${service_name}-relay-conf"
@@ -26,39 +26,38 @@ class iop::core_gateway (
   $server_key_secret_name = "${service_name}-server-key"
   $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
 
-  # Client certificates for Smart Proxy Relay
   $client_cert_secret_name = "${service_name}-client-cert"
   $client_key_secret_name = "${service_name}-client-key"
   $client_ca_cert_secret_name = "${service_name}-client-ca-cert"
 
   podman::secret { $server_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::iop_advisor_engine::server_cert,
+    path   => $certs::iop::server_cert,
   }
 
   podman::secret { $server_key_secret_name:
     ensure => $ensure,
-    path   => $certs::iop_advisor_engine::server_key,
+    path   => $certs::iop::server_key,
   }
 
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::iop_advisor_engine::server_ca_cert,
+    path   => $certs::iop::server_ca_cert,
   }
 
   podman::secret { $client_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::foreman_proxy::foreman_ssl_cert,
+    path   => $certs::iop::client_cert,
   }
 
   podman::secret { $client_key_secret_name:
     ensure => $ensure,
-    path   => $certs::foreman_proxy::foreman_ssl_key,
+    path   => $certs::iop::client_key,
   }
 
   podman::secret { $client_ca_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::foreman_proxy::foreman_ssl_ca_cert,
+    path   => $certs::iop::client_ca_cert,
   }
 
   podman::secret { $relay_conf_secret_name:
@@ -106,7 +105,10 @@ class iop::core_gateway (
         'Restart' => 'always',
       },
       'Install'   => {
-        'WantedBy' => ['multi-user.target', 'default.target'],
+        'WantedBy' => [
+          'multi-user.target',
+          'default.target',
+        ],
       },
     },
   }
