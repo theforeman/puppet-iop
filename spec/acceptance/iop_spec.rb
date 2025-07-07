@@ -11,34 +11,60 @@ describe 'basic installation' do
     on default, 'dnf -y remove postgres*'
   end
 
-  context 'with basic parameters' do
+  shared_examples 'foreman directory setup' do
+    let(:foreman_setup) do
+      <<-PUPPET
+      file { '/var/lib/foreman':
+        ensure => directory,
+      }
+
+      file { '/var/lib/foreman/public':
+        ensure => directory,
+        require => File['/var/lib/foreman'],
+      }
+
+      file { '/var/lib/foreman/public/assets':
+        ensure => directory,
+        require => File['/var/lib/foreman/public'],
+      }
+
+      file { '/var/lib/foreman/public/assets/apps':
+        ensure => directory,
+        require => File['/var/lib/foreman/public/assets'],
+      }
+
+      file { '/usr/share/foreman':
+        ensure => directory,
+      }
+
+      file { '/usr/share/foreman/public':
+        ensure => link,
+        target => '/var/lib/foreman/public',
+        require => [File['/usr/share/foreman'], File['/var/lib/foreman/public']],
+      }
+
+      include foreman::config::apache
+      PUPPET
+    end
+  end
+
+  context 'with default parameters (vulnerability and advisor enabled)' do
+    include_examples 'foreman directory setup'
+
     it_behaves_like 'an idempotent resource' do
       let(:manifest) do
         <<-PUPPET
-        file { '/var/lib/foreman':
-          ensure => directory,
-        }
-
-        file { '/var/lib/foreman/public':
-          ensure => directory,
-          require => File['/var/lib/foreman'],
-        }
-
-        file { '/var/lib/foreman/public/assets':
-          ensure => directory,
-          require => File['/var/lib/foreman/public'],
-        }
-
-        file { '/var/lib/foreman/public/assets/apps':
-          ensure => directory,
-          require => File['/var/lib/foreman/public/assets'],
-        }
-
-        include foreman::config::apache
+        #{foreman_setup}
 
         class { 'iop': }
         PUPPET
       end
+    end
+
+    # Core services should always be running
+    describe service('iop-core-host-inventory-api') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
     end
 
     describe command('curl http://localhost:24443/') do
@@ -65,13 +91,35 @@ describe 'basic installation' do
       its(:exit_status) { should eq 0 }
     end
 
-    describe service('iop-core-host-inventory-api') do
+    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory curl http://iop-core-host-inventory-api:8081/health') do
+      its(:exit_status) { should eq 0 }
+    end
+
+    # Vulnerability services should be running
+    describe service('iop-service-vuln-manager') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory curl http://iop-core-host-inventory-api:8081/health') do
-      its(:exit_status) { should eq 0 }
+    describe service('iop-service-vmaas-reposcan') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
+    end
+
+    # Advisor services should be running
+    describe service('iop-service-advisor-backend-service') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
+    end
+
+    describe service('iop-service-advisor-backend-api') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
+    end
+
+    describe service('iop-service-remediations-api') do
+      it { is_expected.to be_running }
+      it { is_expected.to be_enabled }
     end
   end
 end
