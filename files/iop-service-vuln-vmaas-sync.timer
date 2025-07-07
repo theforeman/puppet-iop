@@ -1,9 +1,11 @@
 [Unit]
-Description=Vulnerability VMAAS Sync Job Timer
+Description=Timer for Vulnerability VMAAS Sync Job
 
 [Timer]
-OnBootSec=30min
+OnBootSec=10min
 OnUnitActiveSec=4h
+Persistent=true
+RandomizedDelaySec=300
 
 [Install]
-WantedBy=default.target
+WantedBy=timers.target

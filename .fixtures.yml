@@ -12,7 +12,7 @@ fixtures:
     redis:         "https://github.com/voxpupuli/puppet-redis"
     podman:
       repo: 'https://github.com/ehelms/puppet-podman'
-      branch: 'fix-secret'
+      branch: 'allow-disabled-quadlet'
     postgresql: 'https://github.com/puppetlabs/puppetlabs-postgresql'
     selinux_core: 'https://github.com/puppetlabs/puppetlabs-selinux_core'
     stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib'
