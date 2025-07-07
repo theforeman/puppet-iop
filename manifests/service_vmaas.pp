@@ -93,6 +93,7 @@ class iop::service_vmaas (
           'SYNC_RELEASES=no',
           'SYNC_RELEASE_GRAPH=no',
           'KATELLO_URL=http://iop-core-gateway:9090',
+          'REDHAT_CVEMAP_URL=http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml',
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
