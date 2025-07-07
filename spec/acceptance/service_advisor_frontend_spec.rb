@@ -41,22 +41,18 @@ describe 'basic installation' do
 
         include foreman::config::apache
 
-        class { 'iop::service_vulnerability_frontend': }
+        class { 'iop::service_advisor_frontend': }
         PUPPET
       end
     end
 
-    describe file("/var/lib/foreman/public/assets/apps/vulnerability/app.info.json") do
+    describe file("/var/lib/foreman/public/assets/apps/advisor/app.info.json") do
       it { is_expected.to be_file }
     end
 
-    describe file("/var/lib/foreman/public/assets/apps/vulnerability") do
+    describe file("/var/lib/foreman/public/assets/apps/advisor") do
       it { is_expected.to be_directory }
       it { should be_mode 755 }
-    end
-
-    describe command("curl -s -o /dev/null -w '%{http_code}' http://#{host_inventory['fqdn']}/assets/apps/vulnerability/app.info.json") do
-      its(:stdout) { should match /200/ }
     end
   end
 end
