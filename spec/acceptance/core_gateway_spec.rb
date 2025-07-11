@@ -25,8 +25,8 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe command('curl http://localhost:24443/') do
-      its(:exit_status) { should eq 0 }
+    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.crt --key /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
+      its(:stdout) { should match /200/ }
     end
   end
 end
