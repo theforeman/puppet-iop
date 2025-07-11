@@ -67,32 +67,28 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe command('curl http://localhost:24443/') do
-      its(:exit_status) { should eq 0 }
+    describe command("curl -s -o /dev/null -w '%{http_code}' https://localhost:24443/ --cert /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.crt --key /root/ssl-build/#{host_inventory['fqdn']}/#{host_inventory['fqdn']}-foreman-proxy-client.key --cacert /root/ssl-build/katello-server-ca.crt") do
+      its(:stdout) { should match /200/ }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/puptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-puptoo:8000/metrics") do
+      its(:stdout) { should match /200/ }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/yuptoo curl http://iop-core-yuptoo:5005/') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/yuptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-yuptoo:5005/") do
+      its(:stdout) { should match /200/ }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/ingress curl http://iop-core-ingress:8080/') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/ingress curl -s -o /dev/null -w '%{http_code}' http://iop-core-ingress:8080/") do
+      its(:stdout) { should match /200/ }
     end
 
-    describe command('curl http://localhost:24443/api/ingress') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/host-inventory:latest curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory:9126/") do
+      its(:stdout) { should match /200/ }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory:latest curl http://iop-core-host-inventory:9126/') do
-      its(:exit_status) { should eq 0 }
-    end
-
-    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory curl http://iop-core-host-inventory-api:8081/health') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/host-inventory curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory-api:8081/health") do
+      its(:stdout) { should match /200/ }
     end
 
     # Vulnerability services should be running

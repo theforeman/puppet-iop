@@ -25,8 +25,8 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
-      its(:exit_status) { should eq 0 }
+    describe command("podman run --network=iop-core-network quay.io/iop/puptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-puptoo:8000/metrics") do
+      its(:stdout) { should match /200/ }
     end
   end
 end
