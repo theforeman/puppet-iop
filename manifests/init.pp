@@ -35,18 +35,18 @@ class iop (
   }
 
   if $register_as_smartproxy {
-    include katello
+    $oauth_consumer_key = extlib::cache_data('foreman_cache_data', 'oauth_consumer_key', extlib::random_password(32))
+    $oauth_consumer_secret = extlib::cache_data('foreman_cache_data', 'oauth_consumer_secret', extlib::random_password(32))
 
     foreman_smartproxy { 'iop-gateway':
       ensure          => present,
       base_url        => "https://${facts['networking']['fqdn']}",
-      consumer_key    => $foreman::oauth_consumer_key,
-      consumer_secret => $foreman::oauth_consumer_secret,
-      effective_user  => $foreman::oauth_effective_user,
+      consumer_key    => $oauth_consumer_key,
+      consumer_secret => $oauth_consumer_secret,
+      effective_user  => 'admin',
       ssl_ca          => $certs::iop::client_ca_cert,
       url             => 'https://localhost:24443',
       require         => [
-        Class['katello'],
         Class['iop::core_gateway'],
       ],
     }
