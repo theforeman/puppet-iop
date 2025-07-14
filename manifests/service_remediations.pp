@@ -19,7 +19,7 @@ class iop::service_remediations (
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'remediations_db',
   String[1] $database_user = 'remediations_user',
-  String[1] $database_password = 'remediations_password',
+  String[1] $database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
 ) {
   include podman
   include iop::database
