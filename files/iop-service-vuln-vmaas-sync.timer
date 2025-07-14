@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for Vulnerability VMAAS Sync Job
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=4h
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
