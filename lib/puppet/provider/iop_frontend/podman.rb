@@ -31,7 +31,14 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     destroy if File.directory?(resource[:destination])
 
-    FileUtils.chmod_R(0755, @staged_content_path)
+    # Set appropriate permissions: 0755 for directories, 0644 for files
+    Dir.glob(File.join(@staged_content_path, '**', '*'), File::FNM_DOTMATCH).each do |path|
+      if File.directory?(path)
+        File.chmod(0755, path)
+      else
+        File.chmod(0644, path)
+      end
+    end
     Puppet.debug("Moving staged content from '#{@staged_content_path}' to '#{resource[:destination]}'")
     FileUtils.mv(@staged_content_path, resource[:destination])
 
