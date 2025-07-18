@@ -14,6 +14,7 @@ describe 'iop' do
         it { should contain_class('iop::core_yuptoo') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
+        it { should contain_class('iop::core_host_inventory_frontend') }
         it { should contain_class('iop::service_vmaas') }
         it { should contain_class('iop::service_vulnerability_frontend') }
         it { should contain_class('iop::service_vulnerability') }
@@ -35,6 +36,7 @@ describe 'iop' do
         it { should contain_class('iop::core_yuptoo') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
+        it { should contain_class('iop::core_host_inventory_frontend') }
         it { should_not contain_class('iop::service_vmaas') }
         it { should_not contain_class('iop::service_vulnerability_frontend') }
         it { should_not contain_class('iop::service_vulnerability') }
@@ -56,6 +58,7 @@ describe 'iop' do
         it { should contain_class('iop::core_yuptoo') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
+        it { should contain_class('iop::core_host_inventory_frontend') }
         it { should contain_class('iop::service_vmaas') }
         it { should contain_class('iop::service_vulnerability_frontend') }
         it { should contain_class('iop::service_vulnerability') }
@@ -78,6 +81,7 @@ describe 'iop' do
         it { should contain_class('iop::core_yuptoo') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
+        it { should contain_class('iop::core_host_inventory_frontend') }
         it { should_not contain_class('iop::service_vmaas') }
         it { should_not contain_class('iop::service_vulnerability_frontend') }
         it { should_not contain_class('iop::service_vulnerability') }

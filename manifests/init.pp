@@ -21,6 +21,7 @@ class iop (
   include iop::core_engine
   include iop::core_gateway
   include iop::core_host_inventory
+  include iop::core_host_inventory_frontend
 
   if $enable_vulnerability {
     include iop::service_vmaas
