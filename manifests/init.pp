@@ -27,6 +27,7 @@ class iop (
     include iop::service_vmaas
     include iop::service_vulnerability_frontend
     include iop::service_vulnerability
+    include iop::metadata_downloader
   }
 
   if $enable_advisor {
