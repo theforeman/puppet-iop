@@ -25,5 +25,10 @@ describe 'basic installation' do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
+
+    it 'should have kafka-data volume' do
+      result = shell('podman volume ls --format "{{.Name}}"')
+      expect(result.stdout).to match(/kafka-data/)
+    end
   end
 end
