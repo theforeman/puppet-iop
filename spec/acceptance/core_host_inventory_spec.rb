@@ -21,6 +21,14 @@ describe 'basic installation' do
       end
     end
 
+    describe service('iop-core-host-inventory-migrate') do
+      it { is_expected.to be_enabled }
+    end
+
+    describe service('iop-core-host-inventory-create-view') do
+      it { is_expected.to be_enabled }
+    end
+
     describe service('iop-core-host-inventory') do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
