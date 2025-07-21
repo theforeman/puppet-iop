@@ -30,7 +30,7 @@ class iop::core_kafka (
     secret => Sensitive(file('iop/kafka/init')),
   }
 
-  podman::volume { 'kafka-data':
+  podman::volume { 'iop-core-kafka-data':
     ensure => $ensure,
   }
 
@@ -40,7 +40,7 @@ class iop::core_kafka (
     user         => 'root',
     defaults     => {},
     require      => [
-      Podman::Volume['kafka-data'],
+      Podman::Volume['iop-core-kafka-data'],
       Podman::Network['iop-core-network']
     ],
     settings     => {
@@ -57,7 +57,7 @@ class iop::core_kafka (
           'KAFKA_NODE_ID=1',
         ],
         'Volume'        => [
-          'kafka-data:/var/lib/kafka/data',
+          'iop-core-kafka-data:/var/lib/kafka/data',
         ],
         'Secret'        => [
           'iop-core-kafka-init-start,target=/opt/kafka/bin/init-start.sh',

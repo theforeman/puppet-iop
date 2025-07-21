@@ -26,9 +26,9 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    it 'should have kafka-data volume' do
+    it 'should have iop-core-kafka-data volume' do
       result = shell('podman volume ls --format "{{.Name}}"')
-      expect(result.stdout).to match(/kafka-data/)
+      expect(result.stdout).to match(/iop-core-kafka-data/)
     end
   end
 end
