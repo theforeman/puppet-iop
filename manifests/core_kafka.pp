@@ -30,18 +30,8 @@ class iop::core_kafka (
     secret => Sensitive(file('iop/kafka/init')),
   }
 
-  file { '/var/lib/kafka':
-    ensure => directory,
-    mode   => '0755',
-    owner  => '1001',
-    group  => '1001',
-  }
-
-  file { '/var/lib/kafka/data':
-    ensure => directory,
-    mode   => '0755',
-    owner  => '1001',
-    group  => '1001',
+  podman::volume { 'iop-core-kafka-data':
+    ensure => $ensure,
   }
 
   podman::quadlet { 'iop-core-kafka':
@@ -50,7 +40,7 @@ class iop::core_kafka (
     user         => 'root',
     defaults     => {},
     require      => [
-      File['/var/lib/kafka/data'],
+      Podman::Volume['iop-core-kafka-data'],
       Podman::Network['iop-core-network']
     ],
     settings     => {
@@ -67,7 +57,7 @@ class iop::core_kafka (
           'KAFKA_NODE_ID=1',
         ],
         'Volume'        => [
-          '/var/lib/kafka/data:/var/lib/kafka/data:Z',
+          'iop-core-kafka-data:/var/lib/kafka/data',
         ],
         'Secret'        => [
           'iop-core-kafka-init-start,target=/opt/kafka/bin/init-start.sh',
