@@ -34,7 +34,6 @@ class iop::core_kafka (
     ensure => $ensure,
   }
 
-
   podman::quadlet { 'iop-core-kafka':
     ensure       => $ensure,
     quadlet_type => 'container',
