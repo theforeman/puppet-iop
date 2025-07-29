@@ -191,7 +191,7 @@ class iop::core_host_inventory (
           "INVENTORY_DB_NAME=${database_name}",
           "INVENTORY_DB_USER=${database_user}",
           "INVENTORY_DB_PASS=${database_password}",
-          'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
+          'KAFKA_BOOTSTRAP_SERVERS=iop-core-kafka:9092',
           'LISTEN_PORT=8081',
           'BYPASS_RBAC=true',
           'FF_LAST_CHECKIN=true',
