@@ -1,10 +1,13 @@
 require 'puppet/provider'
+require 'puppet/util/selinux'
 require 'fileutils'
 require 'digest'
 require 'tmpdir'
 
 Puppet::Type.type(:iop_frontend).provide(:shell) do
   desc 'A provider that uses podman to install the frontend.'
+
+  include Puppet::Util::SELinux
 
   commands runtime: 'podman'
 
@@ -31,16 +34,11 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     destroy if File.directory?(resource[:destination])
 
-    # Set appropriate permissions: 0755 for directories, 0644 for files
-    Dir.glob(File.join(@staged_content_path, '**', '*'), File::FNM_DOTMATCH).each do |path|
-      if File.directory?(path)
-        File.chmod(0755, path)
-      else
-        File.chmod(0644, path)
-      end
-    end
-    Puppet.debug("Moving staged content from '#{@staged_content_path}' to '#{resource[:destination]}'")
-    FileUtils.mv(@staged_content_path, resource[:destination])
+    Puppet.debug("Copying staged content from '#{@staged_content_path}' to '#{resource[:destination]}'")
+    Dir.mkdir(resource[:destination], 0755)
+    FileUtils.cp_r(Dir.glob(File.join(@staged_content_path, '*')), resource[:destination])
+
+    restore_selinux_context(resource[:destination])
 
     metadata_file = File.join(resource[:destination], '.iop_frontend_checksum')
     Puppet.debug("Writing new checksum #{@new_content_checksum} to #{metadata_file}")
@@ -94,6 +92,31 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     content_string = files.map { |f| Digest::SHA256.file(f).hexdigest }.join
     Digest::SHA256.hexdigest(content_string)
+  end
+
+  def restore_selinux_context(path)
+    return unless selinux_support?
+
+    Puppet.debug("Restoring SELinux context for '#{path}' and its contents")
+
+    Dir.glob(File.join(path, '**', '*')).each do |file_path|
+      next if File.basename(file_path) == '.' || File.basename(file_path) == '..'
+
+      begin
+        set_selinux_default_context(file_path)
+        Puppet.debug("Restored SELinux context for '#{file_path}'")
+      rescue => e
+        Puppet.warning("Failed to set SELinux context for '#{file_path}': #{e.message}")
+      end
+    end
+
+    # Also restore context for the directory itself
+    begin
+      set_selinux_default_context(path)
+      Puppet.debug("Restored SELinux context for '#{path}'")
+    rescue => e
+      Puppet.warning("Failed to set SELinux context for '#{path}': #{e.message}")
+    end
   end
 
   def cleanup(container_name, temp_dir)
