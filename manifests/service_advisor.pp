@@ -98,6 +98,7 @@ class iop::service_advisor (
           "ADVISOR_DB_USER=${database_user}",
           "ADVISOR_DB_PASSWORD=${database_password}",
           'ALLOWED_HOSTS=*',
+          'INVENTORY_SERVER_URL=http://iop-core-host-inventory-api:8081/api/inventory/v1',
         ],
       },
       'Install'   => { 'WantedBy' => 'default.target' },
