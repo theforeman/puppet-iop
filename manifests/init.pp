@@ -10,10 +10,13 @@
 #
 # $enable_advisor:: Enable advisor services
 #
+# $foreman_base_url:: Base URL for Foreman connection
+#
 class iop (
   Boolean $register_as_smartproxy = false,
   Boolean $enable_vulnerability = true,
   Boolean $enable_advisor = true,
+  Stdlib::HTTPUrl $foreman_base_url = "https://${facts['networking']['fqdn']}",
 ) {
   include iop::core_ingress
   include iop::core_puptoo
@@ -41,7 +44,7 @@ class iop (
 
     foreman_smartproxy { 'iop-gateway':
       ensure          => present,
-      base_url        => "https://${facts['networking']['fqdn']}",
+      base_url        => $foreman_base_url,
       consumer_key    => $oauth_consumer_key,
       consumer_secret => $oauth_consumer_secret,
       effective_user  => 'admin',
