@@ -27,6 +27,38 @@ class iop::service_advisor (
   include iop::core_network
   include iop::core_host_inventory
 
+  $service_name = 'iop-service-advisor-backend'
+  $database_username_secret_name = "${service_name}-database-username"
+  $database_password_secret_name = "${service_name}-database-password"
+  $database_name_secret_name = "${service_name}-database-name"
+  $database_host_secret_name = "${service_name}-database-host"
+  $database_port_secret_name = "${service_name}-database-port"
+
+  podman::secret { $database_username_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_user),
+  }
+
+  podman::secret { $database_password_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_password),
+  }
+
+  podman::secret { $database_name_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_name),
+  }
+
+  podman::secret { $database_host_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('/var/run/postgresql'),
+  }
+
+  podman::secret { $database_port_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('5432'),
+  }
+
   # Prevents errors if run from /root etc.
   Postgresql_psql {
     cwd => '/',
@@ -63,6 +95,11 @@ class iop::service_advisor (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -92,13 +129,15 @@ class iop::service_advisor (
           'ENABLE_INIT_CONTAINER_MIGRATIONS=true',
           'ENABLE_INIT_CONTAINER_IMPORT_CONTENT=true',
           'IMAGE=latest',
-          'ADVISOR_DB_HOST=/var/run/postgresql',
-          'ADVISOR_DB_PORT=5432',
-          "ADVISOR_DB_NAME=${database_name}",
-          "ADVISOR_DB_USER=${database_user}",
-          "ADVISOR_DB_PASSWORD=${database_password}",
           'ALLOWED_HOSTS=*',
           'INVENTORY_SERVER_URL=http://iop-core-host-inventory-api:8081/api/inventory/v1',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=ADVISOR_DB_USER",
+          "${database_password_secret_name},type=env,target=ADVISOR_DB_PASSWORD",
+          "${database_name_secret_name},type=env,target=ADVISOR_DB_NAME",
+          "${database_host_secret_name},type=env,target=ADVISOR_DB_HOST",
+          "${database_port_secret_name},type=env,target=ADVISOR_DB_PORT",
         ],
       },
       'Install'   => { 'WantedBy' => 'default.target' },
@@ -112,6 +151,11 @@ class iop::service_advisor (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -129,11 +173,13 @@ class iop::service_advisor (
         ],
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
-          'ADVISOR_DB_HOST=/var/run/postgresql',
-          'ADVISOR_DB_PORT=5432',
-          "ADVISOR_DB_NAME=${database_name}",
-          "ADVISOR_DB_USER=${database_user}",
-          "ADVISOR_DB_PASSWORD=${database_password}",
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=ADVISOR_DB_USER",
+          "${database_password_secret_name},type=env,target=ADVISOR_DB_PASSWORD",
+          "${database_name_secret_name},type=env,target=ADVISOR_DB_NAME",
+          "${database_host_secret_name},type=env,target=ADVISOR_DB_HOST",
+          "${database_port_secret_name},type=env,target=ADVISOR_DB_PORT",
         ],
       },
       'Install'   => { 'WantedBy' => 'default.target' },
