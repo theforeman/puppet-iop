@@ -26,6 +26,38 @@ class iop::core_host_inventory (
   include iop::core_kafka
   include iop::database
 
+  $service_name = 'iop-core-host-inventory'
+  $database_username_secret_name = "${service_name}-database-username"
+  $database_password_secret_name = "${service_name}-database-password"
+  $database_name_secret_name = "${service_name}-database-name"
+  $database_host_secret_name = "${service_name}-database-host"
+  $database_port_secret_name = "${service_name}-database-port"
+
+  podman::secret { $database_username_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_user),
+  }
+
+  podman::secret { $database_password_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_password),
+  }
+
+  podman::secret { $database_name_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_name),
+  }
+
+  podman::secret { $database_host_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('/var/run/postgresql/'),
+  }
+
+  podman::secret { $database_port_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('5432'),
+  }
+
   # Prevents errors if run from /root etc.
   Postgresql_psql {
     cwd => '/',
@@ -96,6 +128,11 @@ class iop::core_host_inventory (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -111,14 +148,16 @@ class iop::core_host_inventory (
         'Network'       => 'iop-core-network',
         'Exec'          => 'make upgrade_db',
         'Environment'   => [
-          'INVENTORY_DB_HOST=/var/run/postgresql/',
-          'INVENTORY_DB_PORT=5432',
-          "INVENTORY_DB_NAME=${database_name}",
-          "INVENTORY_DB_USER=${database_user}",
-          "INVENTORY_DB_PASS=${database_password}",
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
+          "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
+          "${database_name_secret_name},type=env,target=INVENTORY_DB_NAME",
+          "${database_host_secret_name},type=env,target=INVENTORY_DB_HOST",
+          "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
@@ -135,6 +174,11 @@ class iop::core_host_inventory (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -148,17 +192,19 @@ class iop::core_host_inventory (
         'Network'       => 'iop-core-network',
         'Exec'          => 'make run_inv_mq_service',
         'Environment'   => [
-          'INVENTORY_DB_HOST=/var/run/postgresql/',
-          'INVENTORY_DB_PORT=5432',
-          "INVENTORY_DB_NAME=${database_name}",
-          "INVENTORY_DB_USER=${database_user}",
-          "INVENTORY_DB_PASS=${database_password}",
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
+          "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
+          "${database_name_secret_name},type=env,target=INVENTORY_DB_NAME",
+          "${database_host_secret_name},type=env,target=INVENTORY_DB_HOST",
+          "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
         ],
       },
       'Install'   => {
@@ -175,6 +221,11 @@ class iop::core_host_inventory (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -186,11 +237,6 @@ class iop::core_host_inventory (
         'Network'       => 'iop-core-network',
         'Exec'          => 'python run_gunicorn.py',
         'Environment'   => [
-          'INVENTORY_DB_HOST=/var/run/postgresql/',
-          'INVENTORY_DB_PORT=5432',
-          "INVENTORY_DB_NAME=${database_name}",
-          "INVENTORY_DB_USER=${database_user}",
-          "INVENTORY_DB_PASS=${database_password}",
           'KAFKA_BOOTSTRAP_SERVERS=iop-core-kafka:9092',
           'LISTEN_PORT=8081',
           'BYPASS_RBAC=true',
@@ -199,6 +245,13 @@ class iop::core_host_inventory (
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
+          "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
+          "${database_name_secret_name},type=env,target=INVENTORY_DB_NAME",
+          "${database_host_secret_name},type=env,target=INVENTORY_DB_HOST",
+          "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
         ],
       },
       'Service'   => {

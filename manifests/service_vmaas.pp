@@ -29,10 +29,40 @@ class iop::service_vmaas (
 
   $service_name = 'iop-service-vmaas-reposcan'
   $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
+  $database_username_secret_name = "${service_name}-database-username"
+  $database_password_secret_name = "${service_name}-database-password"
+  $database_name_secret_name = "${service_name}-database-name"
+  $database_host_secret_name = "${service_name}-database-host"
+  $database_port_secret_name = "${service_name}-database-port"
 
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
     path   => $certs::iop::server_ca_cert,
+  }
+
+  podman::secret { $database_username_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_user),
+  }
+
+  podman::secret { $database_password_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_password),
+  }
+
+  podman::secret { $database_name_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_name),
+  }
+
+  podman::secret { $database_host_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('/var/run/postgresql'),
+  }
+
+  podman::secret { $database_port_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('5432'),
   }
 
   # Prevents errors if run from /root etc.
@@ -67,6 +97,11 @@ class iop::service_vmaas (
       File['/var/lib/vmaas'],
       Postgresql::Server::Db[$database_name],
       Podman::Secret[$server_ca_cert_secret_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -78,11 +113,6 @@ class iop::service_vmaas (
         'Network'       => 'iop-core-network',
         'Exec'          => '/vmaas/entrypoint.sh database-upgrade reposcan',
         'Environment'   => [
-          'POSTGRESQL_HOST=/var/run/postgresql',
-          'POSTGRESQL_PORT=5432',
-          "POSTGRESQL_DATABASE=${database_name}",
-          "POSTGRESQL_USER=${database_user}",
-          "POSTGRESQL_PASSWORD=${database_password}",
           'PROMETHEUS_PORT=8085',
           'PROMETHEUS_MULTIPROC_DIR=/tmp/prometheus_multiproc_dir',
           'SYNC_REPO_LIST_SOURCE=katello',
@@ -101,6 +131,11 @@ class iop::service_vmaas (
         ],
         'Secret'        => [
           "${server_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
+          "${database_username_secret_name},type=env,target=POSTGRESQL_USER",
+          "${database_password_secret_name},type=env,target=POSTGRESQL_PASSWORD",
+          "${database_name_secret_name},type=env,target=POSTGRESQL_DATABASE",
+          "${database_host_secret_name},type=env,target=POSTGRESQL_HOST",
+          "${database_port_secret_name},type=env,target=POSTGRESQL_PORT",
         ],
       },
       'Install'   => {
@@ -117,6 +152,11 @@ class iop::service_vmaas (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -130,15 +170,17 @@ class iop::service_vmaas (
         'Network'       => 'iop-core-network',
         'Exec'          => '/vmaas/entrypoint.sh webapp-go',
         'Environment'   => [
-          'POSTGRESQL_HOST=/var/run/postgresql',
-          'POSTGRESQL_PORT=5432',
-          "POSTGRESQL_DATABASE=${database_name}",
-          "POSTGRESQL_USER=${database_user}",
-          "POSTGRESQL_PASSWORD=${database_password}",
           'REPOSCAN_PUBLIC_URL=http://iop-service-vmaas-reposcan:8000',
           'REPOSCAN_PRIVATE_URL=http://iop-service-vmaas-reposcan:10000',
           'CSAF_UNFIXED_EVAL_ENABLED=FALSE',
           'GIN_MODE=release',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=POSTGRESQL_USER",
+          "${database_password_secret_name},type=env,target=POSTGRESQL_PASSWORD",
+          "${database_name_secret_name},type=env,target=POSTGRESQL_DATABASE",
+          "${database_host_secret_name},type=env,target=POSTGRESQL_HOST",
+          "${database_port_secret_name},type=env,target=POSTGRESQL_PORT",
         ],
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',

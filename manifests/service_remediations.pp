@@ -28,6 +28,38 @@ class iop::service_remediations (
   include iop::core_host_inventory
   include iop::service_advisor
 
+  $service_name = 'iop-service-remediations-api'
+  $database_username_secret_name = "${service_name}-database-username"
+  $database_password_secret_name = "${service_name}-database-password"
+  $database_name_secret_name = "${service_name}-database-name"
+  $database_host_secret_name = "${service_name}-database-host"
+  $database_port_secret_name = "${service_name}-database-port"
+
+  podman::secret { $database_username_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_user),
+  }
+
+  podman::secret { $database_password_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_password),
+  }
+
+  podman::secret { $database_name_secret_name:
+    ensure => $ensure,
+    secret => Sensitive($database_name),
+  }
+
+  podman::secret { $database_host_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('/var/run/postgresql'),
+  }
+
+  podman::secret { $database_port_secret_name:
+    ensure => $ensure,
+    secret => Sensitive('5432'),
+  }
+
   # Prevents errors if run from /root etc.
   Postgresql_psql {
     cwd => '/',
@@ -43,13 +75,18 @@ class iop::service_remediations (
     locale   => 'en_US.utf8',
   }
 
-  podman::quadlet { 'iop-service-remediations-api':
+  podman::quadlet { $service_name:
     ensure       => $ensure,
     quadlet_type => 'container',
     user         => 'root',
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
     ],
     settings     => {
       'Unit'      => {
@@ -66,15 +103,18 @@ class iop::service_remediations (
           '/var/run/postgresql:/var/run/postgresql:rw',
         ],
         'Environment'   => [
-          'DB_HOST=/var/run/postgresql',
-          "DB_USERNAME=${database_user}",
-          "DB_PASSWORD=${database_password}",
-          "DB_DATABASE=${database_name}",
           'REDIS_ENABLED=false',
           'RBAC_ENFORCE=false',
           'CONTENT_SERVER_HOST=http://iop-service-advisor-backend-api:8000',
           'ADVISOR_HOST=http://iop-service-advisor-backend-api:8000',
           'INVENTORY_HOST=http://iop-core-host-inventory-api:8081',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=DB_USERNAME",
+          "${database_password_secret_name},type=env,target=DB_PASSWORD",
+          "${database_name_secret_name},type=env,target=DB_DATABASE",
+          "${database_host_secret_name},type=env,target=DB_HOST",
+          "${database_port_secret_name},type=env,target=DB_PORT",
         ],
       },
       'Install'   => { 'WantedBy' => 'default.target' },
