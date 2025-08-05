@@ -13,7 +13,7 @@
 # $foreman_base_url:: Base URL for Foreman connection
 #
 class iop (
-  Boolean $register_as_smartproxy = false,
+  Boolean $register_as_smartproxy = true,
   Boolean $enable_vulnerability = true,
   Boolean $enable_advisor = true,
   Stdlib::HTTPUrl $foreman_base_url = "https://${facts['networking']['fqdn']}",
