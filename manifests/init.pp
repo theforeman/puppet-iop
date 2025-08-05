@@ -2,7 +2,7 @@
 #
 # Install and configure IOP services
 #
-# === Parameters:
+# === Advanced parameters:
 #
 # $register_as_smartproxy:: Whether to register as a smart proxy
 #
@@ -16,7 +16,7 @@ class iop (
   Boolean $register_as_smartproxy = true,
   Boolean $enable_vulnerability = true,
   Boolean $enable_advisor = true,
-  Stdlib::HTTPUrl $foreman_base_url = "https://${facts['networking']['fqdn']}",
+  Optional[Stdlib::HTTPUrl] $foreman_base_url = undef,
 ) {
   include iop::core_ingress
   include iop::core_puptoo
@@ -42,9 +42,11 @@ class iop (
     $oauth_consumer_key = extlib::cache_data('foreman_cache_data', 'oauth_consumer_key', extlib::random_password(32))
     $oauth_consumer_secret = extlib::cache_data('foreman_cache_data', 'oauth_consumer_secret', extlib::random_password(32))
 
+    $_foreman_base_url_real = pick($foreman_base_url, "https://${facts['networking']['fqdn']}")
+
     foreman_smartproxy { 'iop-gateway':
       ensure          => present,
-      base_url        => $foreman_base_url,
+      base_url        => $_foreman_base_url_real,
       consumer_key    => $oauth_consumer_key,
       consumer_secret => $oauth_consumer_secret,
       effective_user  => 'admin',

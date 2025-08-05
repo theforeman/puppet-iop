@@ -27,7 +27,8 @@ describe 'iop' do
       describe 'with enable_vulnerability => false' do
         let :params do
           {
-            enable_vulnerability: false
+            enable_vulnerability: false,
+            register_as_smartproxy: false
           }
         end
 
@@ -49,7 +50,8 @@ describe 'iop' do
       describe 'with enable_advisor => false' do
         let :params do
           {
-            enable_advisor: false
+            enable_advisor: false,
+            register_as_smartproxy: false
           }
         end
 
@@ -72,7 +74,8 @@ describe 'iop' do
         let :params do
           {
             enable_vulnerability: false,
-            enable_advisor: false
+            enable_advisor: false,
+            register_as_smartproxy: false
           }
         end
 
