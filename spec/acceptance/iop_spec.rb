@@ -33,7 +33,9 @@ describe 'basic installation' do
 
         include foreman::config::apache
 
-        class { 'iop': }
+        class { 'iop':
+          register_as_smartproxy => false,
+        }
         PUPPET
       end
     end

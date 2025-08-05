@@ -21,6 +21,7 @@ describe 'iop' do
         it { should contain_class('iop::service_advisor_frontend') }
         it { should contain_class('iop::service_advisor') }
         it { should contain_class('iop::service_remediations') }
+        it { should contain_foreman_smartproxy('iop-gateway') }
       end
 
       describe 'with enable_vulnerability => false' do
