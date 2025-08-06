@@ -9,6 +9,7 @@ fixtures:
     foreman: 'https://github.com/theforeman/puppet-foreman'
     katello:       "https://github.com/theforeman/puppet-katello.git"
     hashfile: "https://github.com/southalc/hashfile"
+    iop_advisor_engine: 'https://github.com/theforeman/puppet-iop_advisor_engine'
     redis:         "https://github.com/voxpupuli/puppet-redis"
     podman:
       repo: 'https://github.com/ehelms/puppet-podman'
