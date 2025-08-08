@@ -41,7 +41,7 @@ class iop::core_ingress (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

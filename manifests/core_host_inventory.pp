@@ -207,6 +207,9 @@ class iop::core_host_inventory (
           "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
         ],
       },
+      'Service'   => {
+        'Restart' => 'on-failure',
+      },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
       },
@@ -255,7 +258,7 @@ class iop::core_host_inventory (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],

@@ -59,6 +59,9 @@ class iop::core_engine (
           'console.redhat.com:127.0.0.1',
         ],
       },
+      'Service'   => {
+        'Restart' => 'on-failure',
+      },
       'Install'   => {
         'WantedBy' => 'default.target',
       },

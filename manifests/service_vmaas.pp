@@ -138,6 +138,9 @@ class iop::service_vmaas (
           "${database_port_secret_name},type=env,target=POSTGRESQL_PORT",
         ],
       },
+      'Service'   => {
+        'Restart' => 'on-failure',
+      },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
       },
@@ -185,6 +188,9 @@ class iop::service_vmaas (
         'Volume'        => [
           '/var/run/postgresql:/var/run/postgresql:rw',
         ],
+      },
+      'Service'   => {
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
