@@ -262,4 +262,66 @@ class iop::core_host_inventory (
       },
     },
   }
+
+  podman::quadlet { 'iop-core-host-inventory-cleanup':
+    ensure         => $ensure,
+    quadlet_type   => 'container',
+    user           => 'root',
+    service_ensure => 'stopped',
+    require        => [
+      Podman::Network['iop-core-network'],
+      Postgresql::Server::Db[$database_name],
+      Podman::Secret[$database_username_secret_name],
+      Podman::Secret[$database_password_secret_name],
+      Podman::Secret[$database_name_secret_name],
+      Podman::Secret[$database_host_secret_name],
+      Podman::Secret[$database_port_secret_name],
+    ],
+    settings       => {
+      'Unit'      => {
+        'Description' => 'Host Inventory Access Tags Cleanup Job',
+        'Wants'       => ['iop-core-host-inventory-api.service'],
+        'After'       => ['iop-core-host-inventory-api.service'],
+      },
+      'Container' => {
+        'Image'         => $image,
+        'ContainerName' => 'iop-core-host-inventory-cleanup',
+        'Network'       => 'iop-core-network',
+        'Exec'          => 'make run_host_delete_access_tags',
+        'Environment'   => [
+          'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
+          'FF_LAST_CHECKIN=true',
+          'USE_SUBMAN_ID=true',
+        ],
+        'Volume'        => [
+          '/var/run/postgresql:/var/run/postgresql:rw',
+        ],
+        'Secret'        => [
+          "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
+          "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
+          "${database_name_secret_name},type=env,target=INVENTORY_DB_NAME",
+          "${database_host_secret_name},type=env,target=INVENTORY_DB_HOST",
+          "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
+        ],
+      },
+      'Service'   => {
+        'Type'    => 'oneshot',
+        'Restart' => 'on-failure',
+      },
+      'Install'   => {
+        'WantedBy'        => [],
+      },
+    },
+  }
+
+  $cleanup_timer_ensure = $ensure ? { 'present' => true, default => false }
+
+  systemd::timer { 'iop-core-host-inventory-cleanup.timer':
+    ensure        => $ensure,
+    enable        => $cleanup_timer_ensure,
+    active        => $cleanup_timer_ensure,
+    service_unit  => 'iop-core-host-inventory-cleanup.service',
+    timer_content => file('iop/iop-core-host-inventory-cleanup.timer'),
+    require       => Podman::Quadlet['iop-core-host-inventory-cleanup'],
+  }
 }

@@ -34,5 +34,27 @@ describe 'basic installation' do
     describe command("podman run --network=iop-core-network quay.io/iop/host-inventory curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory-api:8081/health") do
       its(:stdout) { should match /200/ }
     end
+
+    describe service('iop-core-host-inventory-cleanup') do
+      it { is_expected.not_to be_running }
+    end
+
+    describe command('systemctl is-enabled iop-core-host-inventory-cleanup') do
+      its(:stdout) { should match /generated/ }
+    end
+
+    describe service('iop-core-host-inventory-cleanup.timer') do
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
+    end
+
+    describe file('/etc/systemd/system/iop-core-host-inventory-cleanup.timer') do
+      it { is_expected.to be_file }
+      its(:content) { should match /OnBootSec=10min/ }
+      its(:content) { should match /OnUnitActiveSec=24h/ }
+      its(:content) { should match /Persistent=true/ }
+      its(:content) { should match /RandomizedDelaySec=300/ }
+      its(:content) { should match /WantedBy=timers.target/ }
+    end
   end
 end
