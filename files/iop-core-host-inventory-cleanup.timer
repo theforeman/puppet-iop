@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for Host Inventory Access Tags Cleanup Job
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=24h
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
