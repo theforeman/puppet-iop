@@ -66,7 +66,7 @@ class iop::core_kafka (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],

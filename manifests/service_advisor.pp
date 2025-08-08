@@ -140,6 +140,9 @@ class iop::service_advisor (
           "${database_port_secret_name},type=env,target=ADVISOR_DB_PORT",
         ],
       },
+      'Service'   => {
+        'Restart' => 'on-failure',
+      },
       'Install'   => { 'WantedBy' => 'default.target' },
     },
   }
@@ -181,6 +184,9 @@ class iop::service_advisor (
           "${database_host_secret_name},type=env,target=ADVISOR_DB_HOST",
           "${database_port_secret_name},type=env,target=ADVISOR_DB_PORT",
         ],
+      },
+      'Service'   => {
+        'Restart' => 'on-failure',
       },
       'Install'   => { 'WantedBy' => 'default.target' },
     },

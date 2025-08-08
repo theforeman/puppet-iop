@@ -36,7 +36,7 @@ class iop::core_puptoo (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

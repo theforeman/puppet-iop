@@ -36,7 +36,7 @@ class iop::core_yuptoo (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

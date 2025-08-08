@@ -102,7 +102,7 @@ class iop::core_gateway (
         ],
       },
       'Service'   => {
-        'Restart' => 'always',
+        'Restart' => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => [

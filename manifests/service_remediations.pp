@@ -117,6 +117,9 @@ class iop::service_remediations (
           "${database_port_secret_name},type=env,target=DB_PORT",
         ],
       },
+      'Service'   => {
+        'Restart' => 'on-failure',
+      },
       'Install'   => { 'WantedBy' => 'default.target' },
     },
   }
