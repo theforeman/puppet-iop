@@ -149,7 +149,6 @@ class iop::core_host_inventory (
         'Exec'          => 'make upgrade_db',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
-          'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
         'Secret'        => [
@@ -193,7 +192,6 @@ class iop::core_host_inventory (
         'Exec'          => 'make run_inv_mq_service',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
-          'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
         'Volume'        => [
@@ -240,7 +238,6 @@ class iop::core_host_inventory (
           'KAFKA_BOOTSTRAP_SERVERS=iop-core-kafka:9092',
           'LISTEN_PORT=8081',
           'BYPASS_RBAC=true',
-          'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
         'Volume'        => [
@@ -290,7 +287,6 @@ class iop::core_host_inventory (
         'Exec'          => 'make run_host_delete_access_tags',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
-          'FF_LAST_CHECKIN=true',
           'USE_SUBMAN_ID=true',
         ],
         'Volume'        => [
