@@ -14,12 +14,18 @@
 #
 # $database_password:: Password for the remediations database
 #
+# $database_host:: Host for the remediations database
+#
+# $database_port:: Port for the remediations database
+#
 class iop::service_remediations (
   String[1] $image = 'quay.io/iop/remediations:latest',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'remediations_db',
   String[1] $database_user = 'remediations_user',
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
+  String[1] $database_host = '/var/run/postgresql',
+  Stdlib::Port $database_port = 5432,
 ) {
   include podman
   include iop::database
@@ -34,6 +40,11 @@ class iop::service_remediations (
   $database_name_secret_name = "${service_name}-database-name"
   $database_host_secret_name = "${service_name}-database-host"
   $database_port_secret_name = "${service_name}-database-port"
+
+  $socket_volume = $database_host ? {
+    /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
+    default                   => [],
+  }
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -52,12 +63,12 @@ class iop::service_remediations (
 
   podman::secret { $database_host_secret_name:
     ensure => $ensure,
-    secret => Sensitive('/var/run/postgresql'),
+    secret => Sensitive($database_host),
   }
 
   podman::secret { $database_port_secret_name:
     ensure => $ensure,
-    secret => Sensitive('5432'),
+    secret => Sensitive(String($database_port)),
   }
 
   # Prevents errors if run from /root etc.
@@ -99,9 +110,7 @@ class iop::service_remediations (
         'ContainerName' => 'iop-service-remediations-api',
         'Network'       => 'iop-core-network',
         'Exec'          => 'sh -c "npm run db:migrate && exec node --max-http-header-size=16384 src/app.js"',
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Environment'   => [
           'REDIS_ENABLED=false',
           'RBAC_ENFORCE=false',

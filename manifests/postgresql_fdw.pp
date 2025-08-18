@@ -21,6 +21,10 @@
 #
 # @param remote_password The password for the remote_user.
 #
+# @param database_host The host for the remote database connection.
+#
+# @param database_port The port for the remote database connection.
+#
 define iop::postgresql_fdw (
   String $database_name,
   String $database_user,
@@ -28,6 +32,8 @@ define iop::postgresql_fdw (
   String $remote_database_name,
   String $remote_user,
   String $remote_password,
+  String $database_host = 'localhost',
+  Stdlib::Port $database_port = 5432,
 ) {
   $remote_table_schema = 'inventory'
   $remote_table_name = 'hosts'
@@ -50,7 +56,7 @@ define iop::postgresql_fdw (
 
   postgresql_psql { "${name}-create_foreign_server":
     db      => $database_name,
-    command => "CREATE SERVER ${foreign_server_name} FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'localhost', port '5432', dbname '${remote_database_name}');",
+    command => "CREATE SERVER ${foreign_server_name} FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '${database_host}', port '${database_port}', dbname '${remote_database_name}');",
     unless  => "SELECT 1 FROM pg_foreign_server WHERE srvname = '${foreign_server_name}'",
     require => Postgresql::Server::Extension["${database_name}-fdw"],
   }

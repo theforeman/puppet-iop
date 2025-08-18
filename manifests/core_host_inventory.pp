@@ -14,12 +14,18 @@
 #
 # $database_password:: Password for the inventory database
 #
+# $database_host:: Host for the inventory database
+#
+# $database_port:: Port for the inventory database
+#
 class iop::core_host_inventory (
   String[1] $image = 'quay.io/iop/host-inventory:latest',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'host_inventory_db_password', extlib::random_password(32)),
   String[1] $database_user = 'inventory_user',
   String[1] $database_name = 'inventory_db',
+  String[1] $database_host = '/var/run/postgresql/',
+  Stdlib::Port $database_port = 5432,
 ) {
   include podman
   include iop::core_network
@@ -32,6 +38,11 @@ class iop::core_host_inventory (
   $database_name_secret_name = "${service_name}-database-name"
   $database_host_secret_name = "${service_name}-database-host"
   $database_port_secret_name = "${service_name}-database-port"
+
+  $socket_volume = $database_host ? {
+    /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
+    default                   => [],
+  }
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -50,12 +61,12 @@ class iop::core_host_inventory (
 
   podman::secret { $database_host_secret_name:
     ensure => $ensure,
-    secret => Sensitive('/var/run/postgresql/'),
+    secret => Sensitive($database_host),
   }
 
   podman::secret { $database_port_secret_name:
     ensure => $ensure,
-    secret => Sensitive('5432'),
+    secret => Sensitive(String($database_port)),
   }
 
   # Prevents errors if run from /root etc.
@@ -158,9 +169,7 @@ class iop::core_host_inventory (
           "${database_host_secret_name},type=env,target=INVENTORY_DB_HOST",
           "${database_port_secret_name},type=env,target=INVENTORY_DB_PORT",
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
       },
     },
   }
@@ -194,9 +203,7 @@ class iop::core_host_inventory (
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
           "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
@@ -243,9 +250,7 @@ class iop::core_host_inventory (
           'BYPASS_RBAC=true',
           'USE_SUBMAN_ID=true',
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
           "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
@@ -292,9 +297,7 @@ class iop::core_host_inventory (
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
           "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
