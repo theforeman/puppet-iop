@@ -14,12 +14,18 @@
 #
 # $database_password:: Password for the vmaas database
 #
+# $database_host:: Host for the vmaas database
+#
+# $database_port:: Port for the vmaas database
+#
 class iop::service_vmaas (
   String[1] $image = 'quay.io/iop/vmaas:latest',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_user = 'vmaas_admin',
   String[1] $database_name = 'vmaas_db',
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'vmaas_db_password', extlib::random_password(32)),
+  String[1] $database_host = '/var/run/postgresql',
+  Stdlib::Port $database_port = 5432,
 ) {
   include podman
   include iop::core_network
@@ -34,6 +40,11 @@ class iop::service_vmaas (
   $database_name_secret_name = "${service_name}-database-name"
   $database_host_secret_name = "${service_name}-database-host"
   $database_port_secret_name = "${service_name}-database-port"
+
+  $socket_volume = $database_host ? {
+    /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
+    default                   => [],
+  }
 
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
@@ -57,12 +68,12 @@ class iop::service_vmaas (
 
   podman::secret { $database_host_secret_name:
     ensure => $ensure,
-    secret => Sensitive('/var/run/postgresql'),
+    secret => Sensitive($database_host),
   }
 
   podman::secret { $database_port_secret_name:
     ensure => $ensure,
-    secret => Sensitive('5432'),
+    secret => Sensitive(String($database_port)),
   }
 
   # Prevents errors if run from /root etc.
@@ -125,8 +136,7 @@ class iop::service_vmaas (
           'KATELLO_URL=http://iop-core-gateway:9090',
           'REDHAT_CVEMAP_URL=http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml',
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
+        'Volume'        => $socket_volume + [
           '/var/lib/vmaas:/data:rw,z',
         ],
         'Secret'        => [
@@ -185,9 +195,7 @@ class iop::service_vmaas (
           "${database_host_secret_name},type=env,target=POSTGRESQL_HOST",
           "${database_port_secret_name},type=env,target=POSTGRESQL_PORT",
         ],
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
       },
       'Service'   => {
         'Restart' => 'on-failure',

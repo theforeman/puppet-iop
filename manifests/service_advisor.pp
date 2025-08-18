@@ -14,12 +14,18 @@
 #
 # $database_password:: Password for the advisor database
 #
+# $database_host:: Host for the advisor database
+#
+# $database_port:: Port for the advisor database
+#
 class iop::service_advisor (
   String[1] $image = 'quay.io/iop/advisor-backend:latest',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'advisor_db',
   String[1] $database_user = 'advisor_user',
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'advisor_db_password', extlib::random_password(32)),
+  String[1] $database_host = '/var/run/postgresql',
+  Stdlib::Port $database_port = 5432,
 ) {
   include podman
   include iop::database
@@ -33,6 +39,11 @@ class iop::service_advisor (
   $database_name_secret_name = "${service_name}-database-name"
   $database_host_secret_name = "${service_name}-database-host"
   $database_port_secret_name = "${service_name}-database-port"
+
+  $socket_volume = $database_host ? {
+    /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
+    default                   => [],
+  }
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -51,12 +62,12 @@ class iop::service_advisor (
 
   podman::secret { $database_host_secret_name:
     ensure => $ensure,
-    secret => Sensitive('/var/run/postgresql'),
+    secret => Sensitive($database_host),
   }
 
   podman::secret { $database_port_secret_name:
     ensure => $ensure,
-    secret => Sensitive('5432'),
+    secret => Sensitive(String($database_port)),
   }
 
   # Prevents errors if run from /root etc.
@@ -112,9 +123,7 @@ class iop::service_advisor (
         'ContainerName' => 'iop-service-advisor-backend-api',
         'Network'       => 'iop-core-network',
         'Exec'          => 'sh -c "./container_init.sh && api/app.sh"',
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Environment'   => [
           'DJANGO_SESSION_KEY=UNUSED',
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
@@ -171,9 +180,7 @@ class iop::service_advisor (
         'ContainerName' => 'iop-service-advisor-backend-service',
         'Network'       => 'iop-core-network',
         'Exec'          => 'pipenv run python service/service.py',
-        'Volume'        => [
-          '/var/run/postgresql:/var/run/postgresql:rw',
-        ],
+        'Volume'        => $socket_volume,
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
         ],
