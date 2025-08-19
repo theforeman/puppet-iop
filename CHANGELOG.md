@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/theforeman/puppet-iop/tree/0.2.0) (2025-08-19)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.1.0...0.2.0)
+
+**Implemented enhancements:**
+
+- Add a timer to cleanup inventory [\#52](https://github.com/theforeman/puppet-iop/pull/52) ([ehelms](https://github.com/ehelms))
+- Add restart on-failure for quadlets [\#51](https://github.com/theforeman/puppet-iop/pull/51) ([ehelms](https://github.com/ehelms))
+- Metadata downloader using curl [\#38](https://github.com/theforeman/puppet-iop/pull/38) ([ehelms](https://github.com/ehelms))
+
 ## [0.1.0](https://github.com/theforeman/puppet-iop/tree/0.1.0) (2025-08-07)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/920f3ee834c5e10486e08d938648158c72e35fc3...0.1.0)
