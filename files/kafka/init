@@ -19,6 +19,12 @@ topics=(
   "platform.upload.validation"
   "platform.logging.logs"
   "platform.payload-status"
+  "platform.remediation-updates.vulnerability"
+  "vulnerability.evaluator.results"
+  "vulnerability.evaluator.recalc"
+  "vulnerability.evaluator.upload"
+  "vulnerability.grouper.inventory.upload"
+  "vulnerability.grouper.advisor.upload"
 )
 
 if ! [[ -v IOP_CORE_KAFKA ]]; then
