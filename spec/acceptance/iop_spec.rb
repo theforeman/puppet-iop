@@ -87,7 +87,6 @@ describe 'basic installation' do
         echo "- $migration" >> $applied
       fi
       SKIP_INSTALLER_MIGRATION
-      on hosts, 'dnf -y install https://download.copr.fedorainfracloud.org/results/packit/theforeman-foreman_rh_cloud-1049/rhel-9-x86_64/09376580-rubygem-foreman_rh_cloud/rubygem-foreman_rh_cloud-12.2.1-1.20250805125407042418.pr1049.4.gc08246d.el9.noarch.rpm'
     end
 
     it_behaves_like 'an idempotent resource' do
