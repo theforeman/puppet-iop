@@ -30,6 +30,7 @@ if [[ -f "$MANUAL_FILE" ]]; then
     if [[ "$CURRENT_CHECKSUM" != "$STORED_CHECKSUM" ]]; then
         echo "Copying updated manual file"
         cp "$MANUAL_FILE" "$OUTPUT_FILE" && echo "$CURRENT_CHECKSUM" > "$CHECKSUM_FILE"
+        chmod 644 "$OUTPUT_FILE"
     else
         echo "Manual file unchanged, skipping"
     fi
@@ -59,6 +60,7 @@ else
         fi
 
         mv "$TEMP_FILE" "$OUTPUT_FILE"
+        chmod 644 "$OUTPUT_FILE"
     else
         echo "Error: Failed to download from $URL" >&2
         exit 1
