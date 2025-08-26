@@ -102,7 +102,8 @@ class iop::core_gateway (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => [

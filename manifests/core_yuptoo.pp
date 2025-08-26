@@ -20,7 +20,9 @@ class iop::core_yuptoo (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => Podman::Network['iop-core-network'],
+    require      => [
+      Podman::Network['iop-core-network'],
+    ],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Yuptoo Container',
@@ -36,7 +38,8 @@ class iop::core_yuptoo (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

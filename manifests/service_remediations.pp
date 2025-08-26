@@ -127,7 +127,8 @@ class iop::service_remediations (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => { 'WantedBy' => 'default.target' },
     },

@@ -21,7 +21,9 @@ class iop::core_ingress (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => Podman::Network['iop-core-network'],
+    require      => [
+      Podman::Network['iop-core-network'],
+    ],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Ingress Container',
@@ -41,7 +43,8 @@ class iop::core_ingress (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

@@ -149,7 +149,8 @@ class iop::service_vmaas (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
@@ -198,7 +199,8 @@ class iop::service_vmaas (
         'Volume'        => $socket_volume,
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],

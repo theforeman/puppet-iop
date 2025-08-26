@@ -41,7 +41,7 @@ class iop::core_kafka (
     defaults     => {},
     require      => [
       Podman::Volume['iop-core-kafka-data'],
-      Podman::Network['iop-core-network']
+      Podman::Network['iop-core-network'],
     ],
     settings     => {
       'Unit'      => {
@@ -66,7 +66,8 @@ class iop::core_kafka (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
