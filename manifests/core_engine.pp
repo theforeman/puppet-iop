@@ -60,7 +60,8 @@ class iop::core_engine (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy' => 'default.target',

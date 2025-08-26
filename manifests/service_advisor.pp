@@ -150,7 +150,8 @@ class iop::service_advisor (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => { 'WantedBy' => 'default.target' },
     },
@@ -193,7 +194,8 @@ class iop::service_advisor (
         ],
       },
       'Service'   => {
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'     => 'on-failure',
       },
       'Install'   => { 'WantedBy' => 'default.target' },
     },
