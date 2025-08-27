@@ -11,9 +11,7 @@ fixtures:
     hashfile: "https://github.com/southalc/hashfile"
     iop_advisor_engine: 'https://github.com/theforeman/puppet-iop_advisor_engine'
     redis:         "https://github.com/voxpupuli/puppet-redis"
-    podman:
-      repo: 'https://github.com/ehelms/puppet-podman'
-      branch: 'remove-trailing-newline'
+    podman: 'https://github.com/southalc/podman'
     postgresql: 'https://github.com/puppetlabs/puppetlabs-postgresql'
     selinux_core: 'https://github.com/puppetlabs/puppetlabs-selinux_core'
     stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib'

@@ -34,5 +34,31 @@ describe 'basic installation' do
     describe command("podman run --network=iop-core-network quay.io/iop/advisor-backend:latest curl -s -o /dev/null -w '%{http_code}' http://iop-service-advisor-backend-service:8000/api/insights/v1/status/live/") do
       its(:stdout) { should match /200/ }
     end
+
+    describe 'FDW setup verification' do
+      describe command('sudo -u postgres psql advisor_db -c "SELECT * FROM pg_foreign_server WHERE srvname = \'hbi_server\';"') do
+        its(:stdout) { should match /hbi_server/ }
+        its(:exit_status) { should eq 0 }
+      end
+
+      describe command('sudo -u postgres psql advisor_db -c "SELECT * FROM information_schema.user_mappings WHERE foreign_server_name = \'hbi_server\';"') do
+        its(:stdout) { should match /advisor_user/ }
+        its(:exit_status) { should eq 0 }
+      end
+
+      describe command('sudo -u postgres psql advisor_db -c "\\det inventory_source.*"') do
+        its(:stdout) { should match /hosts/ }
+        its(:exit_status) { should eq 0 }
+      end
+
+      describe command('sudo -u postgres psql advisor_db -c "\\dv inventory.*"') do
+        its(:stdout) { should match /hosts/ }
+        its(:exit_status) { should eq 0 }
+      end
+
+      describe command('sudo -u postgres psql advisor_db -c "SELECT 1 FROM inventory.hosts LIMIT 1;"') do
+        its(:exit_status) { should eq 0 }
+      end
+    end
   end
 end
