@@ -57,10 +57,10 @@ class iop (
   Stdlib::Port $database_port = 5432,
   String[1] $inventory_database_name = 'inventory_db',
   String[1] $inventory_database_user = 'inventory_user',
-  String[1] $inventory_database_password = extlib::cache_data('iop_cache_data', 'host_inventory_db_password', extlib::random_password(32)),
+  String[1] $inventory_database_password = $iop::params::inventory_database_password,
   String[1] $vulnerability_database_name = 'vulnerability_db',
   String[1] $vulnerability_database_user = 'vulnerability_admin',
-  String[1] $vulnerability_database_password = extlib::cache_data('iop_cache_data', 'vulnerability_db_password', extlib::random_password(32)),
+  String[1] $vulnerability_database_password = $iop::params::vulnerability_database_password,
   String[1] $vmaas_database_name = 'vmaas_db',
   String[1] $vmaas_database_user = 'vmaas_admin',
   String[1] $vmaas_database_password = extlib::cache_data('iop_cache_data', 'vmaas_db_password', extlib::random_password(32)),
@@ -70,7 +70,7 @@ class iop (
   String[1] $remediations_database_name = 'remediations_db',
   String[1] $remediations_database_user = 'remediations_user',
   String[1] $remediations_database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
-) {
+) inherits iop::params {
   include iop::core_ingress
   include iop::core_puptoo
   include iop::core_yuptoo

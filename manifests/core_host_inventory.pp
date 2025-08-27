@@ -21,12 +21,12 @@
 class iop::core_host_inventory (
   String[1] $image = 'quay.io/iop/host-inventory:latest',
   Enum['present', 'absent'] $ensure = 'present',
-  String[1] $database_password = extlib::cache_data('iop_cache_data', 'host_inventory_db_password', extlib::random_password(32)),
+  String[1] $database_password = $iop::params::inventory_database_password,
   String[1] $database_user = 'inventory_user',
   String[1] $database_name = 'inventory_db',
   String[1] $database_host = '/var/run/postgresql/',
   Stdlib::Port $database_port = 5432,
-) {
+) inherits iop::params {
   include podman
   include iop::core_network
   include iop::core_kafka

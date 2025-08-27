@@ -23,10 +23,10 @@ class iop::service_advisor (
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'advisor_db',
   String[1] $database_user = 'advisor_user',
-  String[1] $database_password = extlib::cache_data('iop_cache_data', 'advisor_db_password', extlib::random_password(32)),
+  String[1] $database_password = $iop::params::advisor_database_password,
   String[1] $database_host = '/var/run/postgresql',
   Stdlib::Port $database_port = 5432,
-) {
+) inherits iop::params {
   include podman
   include iop::database
   include iop::core_kafka
