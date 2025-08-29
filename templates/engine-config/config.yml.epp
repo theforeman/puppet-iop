@@ -1,9 +1,12 @@
+<%- |
+  Array[String] $packages,
+| -%>
 plugins:
   default_component_enabled: true
   packages:
-      - insights.specs.default
-      - insights.specs.insights_archive
-      - insights_kafka_service.rules
+<% $packages.each |$package| { -%>
+      - <%= $package %>
+<% } -%>
 configs: []
 service:
   extract_timeout: 10

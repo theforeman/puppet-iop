@@ -4,13 +4,20 @@
 #
 # === Parameters:
 #
-# $image::  The container image
+# $image::    The container image
 #
-# $ensure:: Ensure service is present or absent
+# $ensure::   Ensure service is present or absent
+#
+# $packages:: Array of packages to configure in the engine config
 #
 class iop::core_engine (
   String[1] $image = 'quay.io/iop/insights-engine:latest',
   Enum['present', 'absent'] $ensure = 'present',
+  Array[String] $packages = [
+    'insights.specs.default',
+    'insights.specs.insights_archive',
+    'insights_kafka_service.rules',
+  ],
 ) {
   include podman
   require iop::core_network
@@ -23,7 +30,7 @@ class iop::core_engine (
   # Create the engine config as a secret
   podman::secret { $config_secret_name:
     ensure => $ensure,
-    secret => Sensitive(file('iop/engine-config/config.yml')),
+    secret => Sensitive(epp('iop/engine-config/config.yml.epp', { 'packages' => $packages })),
     flags  => {
       label => [
         'filename=config.yml',
