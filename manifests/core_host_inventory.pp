@@ -298,6 +298,7 @@ class iop::core_host_inventory (
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
+          'PYTHONPATH=/opt/app-root/src',
         ],
         'Volume'        => $socket_volume,
         'Secret'        => [
