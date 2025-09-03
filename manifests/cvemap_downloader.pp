@@ -15,6 +15,9 @@ class iop::cvemap_downloader (
   String $base_url = 'https://security.access.redhat.com/data/meta/v1/cvemap.xml',
   String $timer_interval = '24h',
 ) {
+  include iop::core_gateway
+  include iop::service_vmaas
+
   $script_path = '/usr/local/bin/iop-cvemap-download.sh'
   $basedir = '/var/www/html/pub'
   $relative_path = 'iop/data/meta/v1/cvemap.xml'
@@ -32,8 +35,8 @@ class iop::cvemap_downloader (
     ensure        => $ensure,
     unit_entry    => {
       'Description' => 'Manages cvemap.xml for IoP Vulnerability',
-      'After'       => 'network-online.target',
-      'Wants'       => 'network-online.target',
+      'After'       => ['network-online.target', 'iop-core-gateway.service'],
+      'Wants'       => ['network-online.target', 'iop-core-gateway.service'],
     },
     service_entry => {
       'Type'      => 'oneshot',
@@ -44,7 +47,10 @@ class iop::cvemap_downloader (
     install_entry => {},
     enable        => false,
     active        => false,
-    require       => File[$script_path],
+    require       => [
+      File[$script_path],
+      Class['iop::core_gateway'],
+    ],
   }
 
   $unit_enable = $ensure ? { 'present' => true, 'absent' => false }
