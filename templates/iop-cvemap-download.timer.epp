@@ -3,7 +3,7 @@
 Description=Timer for cvemap.xml download
 
 [Timer]
-OnBootSec=1h
+OnActiveSec=0
 OnUnitActiveSec=<%= $timer_interval %>
 
 [Install]
