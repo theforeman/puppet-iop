@@ -91,11 +91,8 @@ class iop::service_vmaas (
     locale   => 'en_US.utf8',
   }
 
-  file { '/var/lib/vmaas':
-    ensure => directory,
-    mode   => '0775',
-    owner  => 'root',
-    group  => 'root',
+  podman::volume { 'iop-service-vmaas-data':
+    ensure => $ensure,
   }
 
   podman::quadlet { 'iop-service-vmaas-reposcan':
@@ -105,7 +102,7 @@ class iop::service_vmaas (
     defaults     => {},
     require      => [
       Podman::Network['iop-core-network'],
-      File['/var/lib/vmaas'],
+      Podman::Volume['iop-service-vmaas-data'],
       Postgresql::Server::Db[$database_name],
       Podman::Secret[$server_ca_cert_secret_name],
       Podman::Secret[$database_username_secret_name],
@@ -137,7 +134,7 @@ class iop::service_vmaas (
           'REDHAT_CVEMAP_URL=http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml',
         ],
         'Volume'        => $socket_volume + [
-          '/var/lib/vmaas:/data:rw,z',
+          'iop-service-vmaas-data:/data',
         ],
         'Secret'        => [
           "${server_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
