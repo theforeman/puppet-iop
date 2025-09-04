@@ -150,6 +150,7 @@ class iop::core_host_inventory (
         'Description' => 'Database Readiness and Migration Init Container',
       },
       'Service'   => {
+        'Environment'     => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
         'Type'            => 'oneshot',
         'RemainAfterExit' => 'true',
       },
@@ -310,8 +311,9 @@ class iop::core_host_inventory (
         ],
       },
       'Service'   => {
-        'Type'    => 'oneshot',
-        'Restart' => 'on-failure',
+        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Type'        => 'oneshot',
+        'Restart'     => 'on-failure',
       },
       'Install'   => {
         'WantedBy'        => [],
