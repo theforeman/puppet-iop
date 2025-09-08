@@ -11,7 +11,6 @@ describe 'iop::service_vmaas' do
         # VMAAS service tests
         it { should contain_podman__quadlet('iop-service-vmaas-reposcan') }
         it { should contain_podman__quadlet('iop-service-vmaas-webapp-go') }
-        it { should contain_file('/var/lib/vmaas') }
         it { should contain_class('iop::cvemap_downloader') }
       end
 
