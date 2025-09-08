@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0](https://github.com/theforeman/puppet-iop/tree/0.3.0) (2025-09-05)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.2.0...0.3.0)
+
+**Implemented enhancements:**
+
+- Add registry auth environment handling for frontend images [\#66](https://github.com/theforeman/puppet-iop/pull/66) ([ehelms](https://github.com/ehelms))
+- Use auth file for iop-host-inventory quadlets that lacked them [\#65](https://github.com/theforeman/puppet-iop/pull/65) ([pablomh](https://github.com/pablomh))
+- Use a podman volume for vmaas data [\#64](https://github.com/theforeman/puppet-iop/pull/64) ([ehelms](https://github.com/ehelms))
+- Use auth file for iop-service-vuln-dbupgrade as well [\#63](https://github.com/theforeman/puppet-iop/pull/63) ([pablomh](https://github.com/pablomh))
+- Trigger a reposcan when cvemap is downloaded [\#62](https://github.com/theforeman/puppet-iop/pull/62) ([ehelms](https://github.com/ehelms))
+- Provide a way to configure the insights-engine packages [\#59](https://github.com/theforeman/puppet-iop/pull/59) ([ehelms](https://github.com/ehelms))
+- Support authenticated registry [\#57](https://github.com/theforeman/puppet-iop/pull/57) ([ehelms](https://github.com/ehelms))
+- Add database parameters to iop class [\#53](https://github.com/theforeman/puppet-iop/pull/53) ([ehelms](https://github.com/ehelms))
+
+**Fixed bugs:**
+
+- Ensure cvemap has selinux context [\#61](https://github.com/theforeman/puppet-iop/pull/61) ([ehelms](https://github.com/ehelms))
+- Set PYTHONPATH for core-host-inventory-cleanup [\#60](https://github.com/theforeman/puppet-iop/pull/60) ([ehelms](https://github.com/ehelms))
+- Add params.pp to handle database password caching [\#58](https://github.com/theforeman/puppet-iop/pull/58) ([ehelms](https://github.com/ehelms))
+- Ensure cvemap.xml has 644 permissions [\#56](https://github.com/theforeman/puppet-iop/pull/56) ([ehelms](https://github.com/ehelms))
+- Add missing vulnerability kafka topics [\#55](https://github.com/theforeman/puppet-iop/pull/55) ([ehelms](https://github.com/ehelms))
+
 ## [0.2.0](https://github.com/theforeman/puppet-iop/tree/0.2.0) (2025-08-19)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.1.0...0.2.0)
