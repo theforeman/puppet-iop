@@ -106,6 +106,8 @@ class iop::service_vmaas (
       Podman::Network['iop-core-network'],
       Podman::Volume['iop-service-vmaas-data'],
       Postgresql::Server::Db[$database_name],
+    ],
+    subscribe    => [
       Podman::Secret[$client_ca_cert_secret_name],
       Podman::Secret[$database_username_secret_name],
       Podman::Secret[$database_password_secret_name],
@@ -165,6 +167,8 @@ class iop::service_vmaas (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+    ],
+    subscribe    => [
       Podman::Secret[$database_username_secret_name],
       Podman::Secret[$database_password_secret_name],
       Podman::Secret[$database_name_secret_name],

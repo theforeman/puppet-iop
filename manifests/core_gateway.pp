@@ -74,11 +74,15 @@ class iop::core_gateway (
     defaults     => {},
     require      => [
       Podman::Network['iop-core-network'],
-      Podman::Secret[
-        $server_cert_secret_name,
-        $server_key_secret_name,
-        $server_ca_cert_secret_name,
-      ],
+    ],
+    subscribe    => [
+      Podman::Secret[$server_cert_secret_name],
+      Podman::Secret[$server_key_secret_name],
+      Podman::Secret[$server_ca_cert_secret_name],
+      Podman::Secret[$client_cert_secret_name],
+      Podman::Secret[$client_key_secret_name],
+      Podman::Secret[$client_ca_cert_secret_name],
+      Podman::Secret[$relay_conf_secret_name],
     ],
     settings     => {
       'Unit'      => {

@@ -106,6 +106,8 @@ class iop::service_advisor (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+    ],
+    subscribe    => [
       Podman::Secret[$database_username_secret_name],
       Podman::Secret[$database_password_secret_name],
       Podman::Secret[$database_name_secret_name],
@@ -164,6 +166,8 @@ class iop::service_advisor (
     require      => [
       Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
+    ],
+    subscribe    => [
       Podman::Secret[$database_username_secret_name],
       Podman::Secret[$database_password_secret_name],
       Podman::Secret[$database_name_secret_name],
