@@ -36,7 +36,7 @@ class iop::service_vmaas (
   include certs::iop
 
   $service_name = 'iop-service-vmaas-reposcan'
-  $server_ca_cert_secret_name = "${service_name}-server-ca-cert"
+  $client_ca_cert_secret_name = "${service_name}-client-ca-cert"
   $database_username_secret_name = "${service_name}-database-username"
   $database_password_secret_name = "${service_name}-database-password"
   $database_name_secret_name = "${service_name}-database-name"
@@ -48,9 +48,9 @@ class iop::service_vmaas (
     default                   => [],
   }
 
-  podman::secret { $server_ca_cert_secret_name:
+  podman::secret { $client_ca_cert_secret_name:
     ensure => $ensure,
-    path   => $certs::iop::server_ca_cert,
+    path   => $certs::iop::client_ca_cert,
   }
 
   podman::secret { $database_username_secret_name:
@@ -106,7 +106,7 @@ class iop::service_vmaas (
       Podman::Network['iop-core-network'],
       Podman::Volume['iop-service-vmaas-data'],
       Postgresql::Server::Db[$database_name],
-      Podman::Secret[$server_ca_cert_secret_name],
+      Podman::Secret[$client_ca_cert_secret_name],
       Podman::Secret[$database_username_secret_name],
       Podman::Secret[$database_password_secret_name],
       Podman::Secret[$database_name_secret_name],
@@ -139,7 +139,7 @@ class iop::service_vmaas (
           'iop-service-vmaas-data:/data',
         ],
         'Secret'        => [
-          "${server_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
+          "${client_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
           "${database_username_secret_name},type=env,target=POSTGRESQL_USER",
           "${database_password_secret_name},type=env,target=POSTGRESQL_PASSWORD",
           "${database_name_secret_name},type=env,target=POSTGRESQL_DATABASE",
