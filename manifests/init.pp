@@ -70,6 +70,8 @@ class iop (
   String[1] $remediations_database_name = 'remediations_db',
   String[1] $remediations_database_user = 'remediations_user',
   String[1] $remediations_database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
+  Enum['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'] $database_sslmode = 'disable',
+  Optional[Stdlib::Absolutepath] $database_ssl_ca = undef,
 ) inherits iop::params {
   include iop::core_ingress
   include iop::core_puptoo
@@ -82,6 +84,8 @@ class iop (
     database_name     => $inventory_database_name,
     database_user     => $inventory_database_user,
     database_password => $inventory_database_password,
+    database_sslmode  => $database_sslmode,
+    database_ssl_ca   => $database_ssl_ca,
   }
   include iop::core_host_inventory_frontend
 
@@ -92,6 +96,8 @@ class iop (
       database_name     => $vmaas_database_name,
       database_user     => $vmaas_database_user,
       database_password => $vmaas_database_password,
+      database_sslmode  => $database_sslmode,
+      database_ssl_ca   => $database_ssl_ca,
     }
     include iop::service_vulnerability_frontend
     class { 'iop::service_vulnerability':
@@ -100,6 +106,8 @@ class iop (
       database_name     => $vulnerability_database_name,
       database_user     => $vulnerability_database_user,
       database_password => $vulnerability_database_password,
+      database_sslmode  => $database_sslmode,
+      database_ssl_ca   => $database_ssl_ca,
     }
   }
 
@@ -111,6 +119,8 @@ class iop (
       database_name     => $advisor_database_name,
       database_user     => $advisor_database_user,
       database_password => $advisor_database_password,
+      database_sslmode  => $database_sslmode,
+      database_ssl_ca   => $database_ssl_ca,
     }
     class { 'iop::service_remediations':
       database_host     => $database_host,
@@ -118,6 +128,8 @@ class iop (
       database_name     => $remediations_database_name,
       database_user     => $remediations_database_user,
       database_password => $remediations_database_password,
+      database_sslmode  => $database_sslmode,
+      database_ssl_ca   => $database_ssl_ca,
     }
   }
 

@@ -26,6 +26,8 @@ class iop::service_remediations (
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
   String[1] $database_host = '/var/run/postgresql',
   Stdlib::Port $database_port = 5432,
+  Enum['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'] $database_sslmode = 'disable',
+  Optional[Stdlib::Absolutepath] $database_ssl_ca = undef,
 ) {
   include podman
   include iop::database
@@ -45,6 +47,19 @@ class iop::service_remediations (
     /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
     default                   => [],
   }
+
+  # SSL environment variables
+  $ssl_enabled = $database_sslmode ? {
+    'disable' => 'false',
+    default   => 'true',
+  }
+
+  $ssl_cert_env = $database_ssl_ca ? {
+    undef   => [],
+    default => ["DB_SSL_CERT=${database_ssl_ca}"],
+  }
+
+  $ssl_environment = ["DB_SSL_ENABLED=${ssl_enabled}"] + $ssl_cert_env
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -117,7 +132,7 @@ class iop::service_remediations (
           'CONTENT_SERVER_HOST=http://iop-service-advisor-backend-api:8000',
           'ADVISOR_HOST=http://iop-service-advisor-backend-api:8000',
           'INVENTORY_HOST=http://iop-core-host-inventory-api:8081',
-        ],
+        ] + $ssl_environment,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=DB_USERNAME",
           "${database_password_secret_name},type=env,target=DB_PASSWORD",

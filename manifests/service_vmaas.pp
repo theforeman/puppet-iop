@@ -26,6 +26,8 @@ class iop::service_vmaas (
   String[1] $database_password = extlib::cache_data('iop_cache_data', 'vmaas_db_password', extlib::random_password(32)),
   String[1] $database_host = '/var/run/postgresql',
   Stdlib::Port $database_port = 5432,
+  Enum['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'] $database_sslmode = 'disable',
+  Optional[Stdlib::Absolutepath] $database_ssl_ca = undef,
 ) {
   include podman
   include iop::core_network
@@ -47,6 +49,14 @@ class iop::service_vmaas (
     /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
     default                   => [],
   }
+
+  # SSL environment variables
+  $ssl_cert_env = $database_ssl_ca ? {
+    undef   => [],
+    default => ["POSTGRESQL_SSL_CERT=${database_ssl_ca}"],
+  }
+  
+  $ssl_environment = ["POSTGRESQL_SSL_MODE=${database_sslmode}"] + $ssl_cert_env
 
   podman::secret { $server_ca_cert_secret_name:
     ensure => $ensure,
@@ -134,7 +144,7 @@ class iop::service_vmaas (
           'SYNC_RELEASE_GRAPH=no',
           'KATELLO_URL=http://iop-core-gateway:9090',
           'REDHAT_CVEMAP_URL=http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml',
-        ],
+        ] + $ssl_environment,
         'Volume'        => $socket_volume + [
           'iop-service-vmaas-data:/data',
         ],
@@ -187,7 +197,7 @@ class iop::service_vmaas (
           'REPOSCAN_PRIVATE_URL=http://iop-service-vmaas-reposcan:10000',
           'CSAF_UNFIXED_EVAL_ENABLED=FALSE',
           'GIN_MODE=release',
-        ],
+        ] + $ssl_environment,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=POSTGRESQL_USER",
           "${database_password_secret_name},type=env,target=POSTGRESQL_PASSWORD",

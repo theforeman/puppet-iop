@@ -26,6 +26,8 @@ class iop::service_advisor (
   String[1] $database_password = $iop::params::advisor_database_password,
   String[1] $database_host = '/var/run/postgresql',
   Stdlib::Port $database_port = 5432,
+  Enum['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'] $database_sslmode = 'disable',
+  Optional[Stdlib::Absolutepath] $database_ssl_ca = undef,
 ) inherits iop::params {
   include podman
   include iop::database
@@ -44,6 +46,14 @@ class iop::service_advisor (
     /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
     default                   => [],
   }
+
+  # SSL environment variables
+  $ssl_cert_env = $database_ssl_ca ? {
+    undef   => [],
+    default => ["ADVISOR_DB_SSL_CERT=${database_ssl_ca}"],
+  }
+  
+  $ssl_environment = ["ADVISOR_DB_SSL_MODE=${database_sslmode}"] + $ssl_cert_env
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -140,7 +150,7 @@ class iop::service_advisor (
           'IMAGE=latest',
           'ALLOWED_HOSTS=*',
           'INVENTORY_SERVER_URL=http://iop-core-host-inventory-api:8081/api/inventory/v1',
-        ],
+        ] + $ssl_environment,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=ADVISOR_DB_USER",
           "${database_password_secret_name},type=env,target=ADVISOR_DB_PASSWORD",
@@ -184,7 +194,7 @@ class iop::service_advisor (
         'Volume'        => $socket_volume,
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
-        ],
+        ] + $ssl_environment,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=ADVISOR_DB_USER",
           "${database_password_secret_name},type=env,target=ADVISOR_DB_PASSWORD",

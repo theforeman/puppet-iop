@@ -26,6 +26,8 @@ class iop::core_host_inventory (
   String[1] $database_name = 'inventory_db',
   String[1] $database_host = '/var/run/postgresql/',
   Stdlib::Port $database_port = 5432,
+  Enum['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'] $database_sslmode = 'disable',
+  Optional[Stdlib::Absolutepath] $database_ssl_ca = undef,
 ) inherits iop::params {
   include podman
   include iop::core_network
@@ -43,6 +45,14 @@ class iop::core_host_inventory (
     /^\/var\/run\/postgresql/ => ['/var/run/postgresql:/var/run/postgresql:rw'],
     default                   => [],
   }
+
+  # SSL environment variables
+  $ssl_cert_env = $database_ssl_ca ? {
+    undef   => [],
+    default => ["INVENTORY_DB_SSL_CERT=${database_ssl_ca}"],
+  }
+  
+  $ssl_environment = ["INVENTORY_DB_SSL_MODE=${database_sslmode}"] + $ssl_cert_env
 
   podman::secret { $database_username_secret_name:
     ensure => $ensure,
@@ -162,7 +172,7 @@ class iop::core_host_inventory (
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
-        ],
+        ] + $ssl_environment,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
           "${database_password_secret_name},type=env,target=INVENTORY_DB_PASS",
@@ -203,7 +213,7 @@ class iop::core_host_inventory (
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
-        ],
+        ] + $ssl_environment,
         'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
@@ -251,7 +261,7 @@ class iop::core_host_inventory (
           'LISTEN_PORT=8081',
           'BYPASS_RBAC=true',
           'USE_SUBMAN_ID=true',
-        ],
+        ] + $ssl_environment,
         'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
@@ -300,7 +310,7 @@ class iop::core_host_inventory (
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
           'PYTHONPATH=/opt/app-root/src',
-        ],
+        ] + $ssl_environment,
         'Volume'        => $socket_volume,
         'Secret'        => [
           "${database_username_secret_name},type=env,target=INVENTORY_DB_USER",
