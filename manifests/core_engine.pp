@@ -46,6 +46,8 @@ class iop::core_engine (
     defaults     => {},
     require      => [
       Podman::Network['iop-core-network'],
+    ],
+    subscribe    => [
       Podman::Secret[$config_secret_name],
     ],
     settings     => {

@@ -35,6 +35,48 @@ describe 'iop::service_vmaas' do
         it { should contain_podman__quadlet('iop-service-vmaas-reposcan') }
         it { should contain_podman__quadlet('iop-service-vmaas-webapp-go') }
       end
+
+      context 'secret subscription behavior' do
+        it 'should ensure reposcan quadlet subscribes to all secrets' do
+          should contain_podman__quadlet('iop-service-vmaas-reposcan').with(
+            'subscribe' => [
+              'Podman::Secret[iop-service-vmaas-reposcan-client-ca-cert]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-username]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-password]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-name]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-host]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-port]'
+            ]
+          )
+        end
+
+        it 'should ensure webapp-go quadlet subscribes to database secrets' do
+          should contain_podman__quadlet('iop-service-vmaas-webapp-go').with(
+            'subscribe' => [
+              'Podman::Secret[iop-service-vmaas-reposcan-database-username]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-password]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-name]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-host]',
+              'Podman::Secret[iop-service-vmaas-reposcan-database-port]'
+            ]
+          )
+        end
+
+        it 'should create secrets that services depend on' do
+          should contain_podman__secret('iop-service-vmaas-reposcan-database-password')
+          should contain_podman__secret('iop-service-vmaas-reposcan-database-username')
+          should contain_podman__secret('iop-service-vmaas-reposcan-client-ca-cert')
+        end
+
+        it 'should ensure quadlets properly subscribe to secrets' do
+          should contain_podman__quadlet('iop-service-vmaas-reposcan')
+            .that_subscribes_to('Podman::Secret[iop-service-vmaas-reposcan-database-password]')
+          should contain_podman__quadlet('iop-service-vmaas-webapp-go')
+            .that_subscribes_to('Podman::Secret[iop-service-vmaas-reposcan-database-password]')
+          should contain_podman__quadlet('iop-service-vmaas-reposcan')
+            .that_subscribes_to('Podman::Secret[iop-service-vmaas-reposcan-client-ca-cert]')
+        end
+      end
     end
   end
 end
