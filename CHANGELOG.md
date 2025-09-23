@@ -1,6 +1,15 @@
 # Changelog
 
-## [0.3.0](https://github.com/theforeman/puppet-iop/tree/0.3.0) (2025-09-05)
+## [0.4.0](https://github.com/theforeman/puppet-iop/tree/0.4.0) (2025-09-23)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.3.0...0.4.0)
+
+**Fixed bugs:**
+
+- Use client CA certificate for vmaas reposync [\#70](https://github.com/theforeman/puppet-iop/pull/70) ([ehelms](https://github.com/ehelms))
+- Ensure secrets cause systemd restarts [\#69](https://github.com/theforeman/puppet-iop/pull/69) ([ehelms](https://github.com/ehelms))
+
+## [0.3.0](https://github.com/theforeman/puppet-iop/tree/0.3.0) (2025-09-08)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.2.0...0.3.0)
 
