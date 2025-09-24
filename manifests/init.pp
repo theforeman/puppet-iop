@@ -2,15 +2,15 @@
 #
 # Install and configure IOP services
 #
+# === Parameters:
+#
 # === Advanced parameters:
 #
 # $register_as_smartproxy:: Whether to register as a smart proxy
 #
-# $enable_vulnerability:: Enable vulnerability services
-#
-# $enable_advisor:: Enable advisor services
-#
 # $foreman_base_url:: Base URL for Foreman connection
+#
+# $ensure:: Whether services should be present or absent
 #
 # === Database parameters:
 #
@@ -49,9 +49,8 @@
 # $remediations_database_password:: Database password for remediations service
 #
 class iop (
+  Enum['present', 'absent'] $ensure = 'present',
   Boolean $register_as_smartproxy = true,
-  Boolean $enable_vulnerability = true,
-  Boolean $enable_advisor = true,
   Optional[Stdlib::HTTPUrl] $foreman_base_url = undef,
   String[1] $database_host = '/var/run/postgresql/',
   Stdlib::Port $database_port = 5432,
@@ -71,54 +70,56 @@ class iop (
   String[1] $remediations_database_user = 'remediations_user',
   String[1] $remediations_database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
 ) inherits iop::params {
-  include iop::core_ingress
-  include iop::core_puptoo
-  include iop::core_yuptoo
-  include iop::core_engine
-  include iop::core_gateway
+  class { 'iop::core_kafka': ensure => $ensure }
+  class { 'iop::core_ingress': ensure => $ensure }
+  class { 'iop::core_puptoo': ensure => $ensure }
+  class { 'iop::core_yuptoo': ensure => $ensure }
+  class { 'iop::core_engine': ensure => $ensure }
+  class { 'iop::core_gateway': ensure => $ensure }
   class { 'iop::core_host_inventory':
+    ensure            => $ensure,
     database_host     => $database_host,
     database_port     => $database_port,
     database_name     => $inventory_database_name,
     database_user     => $inventory_database_user,
     database_password => $inventory_database_password,
   }
-  include iop::core_host_inventory_frontend
+  class { 'iop::core_host_inventory_frontend': ensure => $ensure }
 
-  if $enable_vulnerability {
-    class { 'iop::service_vmaas':
-      database_host     => $database_host,
-      database_port     => $database_port,
-      database_name     => $vmaas_database_name,
-      database_user     => $vmaas_database_user,
-      database_password => $vmaas_database_password,
-    }
-    include iop::service_vulnerability_frontend
-    class { 'iop::service_vulnerability':
-      database_host     => $database_host,
-      database_port     => $database_port,
-      database_name     => $vulnerability_database_name,
-      database_user     => $vulnerability_database_user,
-      database_password => $vulnerability_database_password,
-    }
+  class { 'iop::service_vmaas':
+    ensure            => $ensure,
+    database_host     => $database_host,
+    database_port     => $database_port,
+    database_name     => $vmaas_database_name,
+    database_user     => $vmaas_database_user,
+    database_password => $vmaas_database_password,
+  }
+  class { 'iop::service_vulnerability_frontend': ensure => $ensure }
+  class { 'iop::service_vulnerability':
+    ensure            => $ensure,
+    database_host     => $database_host,
+    database_port     => $database_port,
+    database_name     => $vulnerability_database_name,
+    database_user     => $vulnerability_database_user,
+    database_password => $vulnerability_database_password,
   }
 
-  if $enable_advisor {
-    include iop::service_advisor_frontend
-    class { 'iop::service_advisor':
-      database_host     => $database_host,
-      database_port     => $database_port,
-      database_name     => $advisor_database_name,
-      database_user     => $advisor_database_user,
-      database_password => $advisor_database_password,
-    }
-    class { 'iop::service_remediations':
-      database_host     => $database_host,
-      database_port     => $database_port,
-      database_name     => $remediations_database_name,
-      database_user     => $remediations_database_user,
-      database_password => $remediations_database_password,
-    }
+  class { 'iop::service_advisor_frontend': ensure => $ensure }
+  class { 'iop::service_advisor':
+    ensure            => $ensure,
+    database_host     => $database_host,
+    database_port     => $database_port,
+    database_name     => $advisor_database_name,
+    database_user     => $advisor_database_user,
+    database_password => $advisor_database_password,
+  }
+  class { 'iop::service_remediations':
+    ensure            => $ensure,
+    database_host     => $database_host,
+    database_port     => $database_port,
+    database_name     => $remediations_database_name,
+    database_user     => $remediations_database_user,
+    database_password => $remediations_database_password,
   }
 
   if $register_as_smartproxy {
@@ -128,7 +129,7 @@ class iop (
     $_foreman_base_url_real = pick($foreman_base_url, "https://${facts['networking']['fqdn']}")
 
     foreman_smartproxy { 'iop-gateway':
-      ensure          => present,
+      ensure          => $ensure,
       base_url        => $_foreman_base_url_real,
       consumer_key    => $oauth_consumer_key,
       consumer_secret => $oauth_consumer_secret,

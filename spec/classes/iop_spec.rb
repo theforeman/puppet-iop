@@ -9,9 +9,12 @@ describe 'iop' do
 
       describe 'with default parameters' do
         it { should compile.with_all_deps }
+        it { should contain_class('iop::core_network') }
+        it { should contain_class('iop::core_kafka') }
         it { should contain_class('iop::core_ingress') }
         it { should contain_class('iop::core_puptoo') }
         it { should contain_class('iop::core_yuptoo') }
+        it { should contain_class('iop::core_engine') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
         it { should contain_class('iop::core_host_inventory_frontend') }
@@ -24,74 +27,55 @@ describe 'iop' do
         it { should contain_foreman_smartproxy('iop-gateway') }
       end
 
-      describe 'with enable_vulnerability => false' do
+      describe 'with ensure => absent' do
         let :params do
           {
-            enable_vulnerability: false,
+            ensure: 'absent',
             register_as_smartproxy: false
           }
         end
 
         it { should compile.with_all_deps }
-        it { should contain_class('iop::core_ingress') }
-        it { should contain_class('iop::core_puptoo') }
-        it { should contain_class('iop::core_yuptoo') }
-        it { should contain_class('iop::core_gateway') }
-        it { should contain_class('iop::core_host_inventory') }
-        it { should contain_class('iop::core_host_inventory_frontend') }
-        it { should_not contain_class('iop::service_vmaas') }
-        it { should_not contain_class('iop::service_vulnerability_frontend') }
-        it { should_not contain_class('iop::service_vulnerability') }
-        it { should contain_class('iop::service_advisor_frontend') }
-        it { should contain_class('iop::service_advisor') }
-        it { should contain_class('iop::service_remediations') }
+        it { should contain_class('iop::core_kafka').with_ensure('absent') }
+        it { should contain_class('iop::core_ingress').with_ensure('absent') }
+        it { should contain_class('iop::core_puptoo').with_ensure('absent') }
+        it { should contain_class('iop::core_yuptoo').with_ensure('absent') }
+        it { should contain_class('iop::core_engine').with_ensure('absent') }
+        it { should contain_class('iop::core_gateway').with_ensure('absent') }
+        it { should contain_class('iop::core_host_inventory').with_ensure('absent') }
+        it { should contain_class('iop::core_host_inventory_frontend').with_ensure('absent') }
+        it { should contain_class('iop::service_vmaas').with_ensure('absent') }
+        it { should contain_class('iop::service_vulnerability_frontend').with_ensure('absent') }
+        it { should contain_class('iop::service_vulnerability').with_ensure('absent') }
+        it { should contain_class('iop::service_advisor_frontend').with_ensure('absent') }
+        it { should contain_class('iop::service_advisor').with_ensure('absent') }
+        it { should contain_class('iop::service_remediations').with_ensure('absent') }
       end
 
-      describe 'with enable_advisor => false' do
+      describe 'with register_as_smartproxy => false' do
         let :params do
           {
-            enable_advisor: false,
             register_as_smartproxy: false
           }
         end
 
         it { should compile.with_all_deps }
+        it { should contain_class('iop::core_network') }
+        it { should contain_class('iop::core_kafka') }
         it { should contain_class('iop::core_ingress') }
         it { should contain_class('iop::core_puptoo') }
         it { should contain_class('iop::core_yuptoo') }
+        it { should contain_class('iop::core_engine') }
         it { should contain_class('iop::core_gateway') }
         it { should contain_class('iop::core_host_inventory') }
         it { should contain_class('iop::core_host_inventory_frontend') }
         it { should contain_class('iop::service_vmaas') }
         it { should contain_class('iop::service_vulnerability_frontend') }
         it { should contain_class('iop::service_vulnerability') }
-        it { should_not contain_class('iop::service_advisor_frontend') }
-        it { should_not contain_class('iop::service_advisor') }
-        it { should_not contain_class('iop::service_remediations') }
-      end
-
-      describe 'with both enable_vulnerability => false and enable_advisor => false' do
-        let :params do
-          {
-            enable_vulnerability: false,
-            enable_advisor: false,
-            register_as_smartproxy: false
-          }
-        end
-
-        it { should compile.with_all_deps }
-        it { should contain_class('iop::core_ingress') }
-        it { should contain_class('iop::core_puptoo') }
-        it { should contain_class('iop::core_yuptoo') }
-        it { should contain_class('iop::core_gateway') }
-        it { should contain_class('iop::core_host_inventory') }
-        it { should contain_class('iop::core_host_inventory_frontend') }
-        it { should_not contain_class('iop::service_vmaas') }
-        it { should_not contain_class('iop::service_vulnerability_frontend') }
-        it { should_not contain_class('iop::service_vulnerability') }
-        it { should_not contain_class('iop::service_advisor_frontend') }
-        it { should_not contain_class('iop::service_advisor') }
-        it { should_not contain_class('iop::service_remediations') }
+        it { should contain_class('iop::service_advisor_frontend') }
+        it { should contain_class('iop::service_advisor') }
+        it { should contain_class('iop::service_remediations') }
+        it { should_not contain_foreman_smartproxy('iop-gateway') }
       end
     end
   end

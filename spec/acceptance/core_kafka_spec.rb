@@ -25,10 +25,26 @@ describe 'basic installation' do
       it { is_expected.to be_running }
       it { is_expected.to be_enabled }
     end
+  end
 
-    it 'should have iop-core-kafka-data volume' do
-      result = shell('podman volume ls --format "{{.Name}}"')
-      expect(result.stdout).to match(/iop-core-kafka-data/)
+  context 'with ensure => absent' do
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        class { 'iop::core_kafka':
+          ensure => 'absent',
+        }
+        PUPPET
+      end
+    end
+
+    describe service('iop-core-kafka') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe file('/etc/containers/systemd/iop-core-kafka.container') do
+      it { is_expected.not_to exist }
     end
   end
 end

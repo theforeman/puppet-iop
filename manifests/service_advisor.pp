@@ -30,7 +30,7 @@ class iop::service_advisor (
   include podman
   include iop::database
   include iop::core_kafka
-  include iop::core_network
+  require iop::core_network
   include iop::core_host_inventory
 
   $service_name = 'iop-service-advisor-backend'
