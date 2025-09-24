@@ -28,7 +28,7 @@ class iop::service_vmaas (
   Stdlib::Port $database_port = 5432,
 ) {
   include podman
-  include iop::core_network
+  require iop::core_network
   include iop::core_kafka
   include iop::core_gateway
   include iop::database
@@ -94,7 +94,7 @@ class iop::service_vmaas (
   }
 
   podman::volume { 'iop-service-vmaas-data':
-    ensure => $ensure,
+    ensure => 'present',
   }
 
   podman::quadlet { 'iop-service-vmaas-reposcan':

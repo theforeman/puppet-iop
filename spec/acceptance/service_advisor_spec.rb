@@ -61,4 +61,39 @@ describe 'basic installation' do
       end
     end
   end
+
+  context 'with ensure => absent' do
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        class { 'iop::service_advisor':
+          ensure => 'absent',
+        }
+        PUPPET
+      end
+    end
+
+    describe service('iop-service-advisor-backend-service') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-service-advisor-backend-api') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe file('/etc/containers/systemd/iop-service-advisor-backend-service.container') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/containers/systemd/iop-service-advisor-backend-api.container') do
+      it { is_expected.not_to exist }
+    end
+
+    describe command('podman secret ls --format "{{.Name}}" | grep "^iop-service-advisor-"') do
+      its(:exit_status) { should eq 1 }
+      its(:stdout) { should be_empty }
+    end
+  end
 end
