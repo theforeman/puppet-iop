@@ -75,7 +75,7 @@ class iop::core_kafka (
     },
   }
 
-  Exec { 'kafka-init':
+  exec { 'kafka-init':
     command => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --create",
     unless  => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --check",
     require => [
