@@ -28,7 +28,7 @@ class iop::core_host_inventory (
   Stdlib::Port $database_port = 5432,
 ) inherits iop::params {
   include podman
-  include iop::core_network
+  require iop::core_network
   include iop::core_kafka
   include iop::database
 

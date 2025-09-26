@@ -56,4 +56,24 @@ describe 'basic installation' do
       it { should be_mode 755 }
     end
   end
+
+  context 'with ensure => absent' do
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        class { 'iop::service_advisor_frontend':
+          ensure => 'absent',
+        }
+        PUPPET
+      end
+    end
+
+    describe file("/var/lib/foreman/public/assets/apps/advisor") do
+      it { is_expected.not_to exist }
+    end
+
+    describe file("/var/lib/foreman/public/assets/apps/advisor/app.info.json") do
+      it { is_expected.not_to exist }
+    end
+  end
 end

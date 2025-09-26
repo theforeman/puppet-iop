@@ -31,7 +31,7 @@ class iop::core_kafka (
   }
 
   podman::volume { 'iop-core-kafka-data':
-    ensure => $ensure,
+    ensure => 'present',
   }
 
   podman::quadlet { 'iop-core-kafka':
@@ -75,14 +75,16 @@ class iop::core_kafka (
     },
   }
 
-  exec { 'kafka-init':
-    command => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --create",
-    unless  => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --check",
-    require => [
-      Podman::Quadlet['iop-core-kafka'],
-      Podman::Network['iop-core-network'],
-      Podman::Secret['iop-core-kafka-init']
-    ],
-    path    => ['/usr/bin', '/usr/sbin'],
+  if $ensure == 'present' {
+    exec { 'kafka-init':
+      command => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --create",
+      unless  => "podman run --network=iop-core-network --secret iop-core-kafka-init,target=/opt/kafka/init.sh,mode=0755 ${image} /opt/kafka/init.sh --check",
+      require => [
+        Podman::Quadlet['iop-core-kafka'],
+        Podman::Network['iop-core-network'],
+        Podman::Secret['iop-core-kafka-init']
+      ],
+      path    => ['/usr/bin', '/usr/sbin'],
+    }
   }
 }

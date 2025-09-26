@@ -72,4 +72,47 @@ describe 'iop::cvemap_downloader' do
       it { should be_readable }
     end
   end
+
+  context 'with ensure => absent' do
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        class { 'iop::cvemap_downloader':
+          ensure => 'absent',
+        }
+        PUPPET
+      end
+    end
+
+    describe file('/usr/local/bin/iop-cvemap-download.sh') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.service') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.timer') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.path') do
+      it { is_expected.not_to exist }
+    end
+
+    describe service('iop-cvemap-download.timer') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-cvemap-download.service') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-cvemap-download.path') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+  end
 end

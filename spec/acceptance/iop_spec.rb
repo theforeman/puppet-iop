@@ -160,4 +160,107 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
   end
+
+  context 'with ensure => absent' do
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<-PUPPET
+        class { 'iop':
+          ensure => 'absent',
+        }
+        PUPPET
+      end
+    end
+
+    # Core services
+    describe service('iop-core-gateway') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-ingress') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-puptoo') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-yuptoo') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-engine') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-host-inventory') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-core-host-inventory-api') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    # Vulnerability services
+    describe service('iop-service-vuln-manager') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-service-vmaas-reposcan') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-service-vmaas-webapp-go') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    # Advisor services
+    describe service('iop-service-advisor-backend-service') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-service-advisor-backend-api') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-service-remediations-api') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    # Container files should be removed
+    describe command('find /etc/containers/systemd/ -name "iop-*.container" 2>/dev/null | wc -l') do
+      its(:stdout) { should match /^0$/ }
+    end
+
+    # Secrets should be cleaned up
+    describe command('podman secret ls --format "{{.Name}}" | grep "^iop-" | wc -l') do
+      its(:stdout) { should match /^0$/ }
+    end
+
+    # Frontend assets should be removed
+    describe file('/var/lib/foreman/public/assets/apps/inventory') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/var/lib/foreman/public/assets/apps/advisor') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/var/lib/foreman/public/assets/apps/vulnerability') do
+      it { is_expected.not_to exist }
+    end
+  end
 end
