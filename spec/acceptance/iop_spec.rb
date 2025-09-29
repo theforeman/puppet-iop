@@ -256,6 +256,11 @@ describe 'basic installation' do
       its(:stdout) { should match /^0$/ }
     end
 
+    # Volumes should be cleaned up
+    describe command('podman volume ls --format "{{.Name}}" | grep "^iop-" | wc -l') do
+      its(:stdout) { should match /^0$/ }
+    end
+
     # Frontend assets should be removed
     describe file('/var/lib/foreman/public/assets/apps/inventory') do
       it { is_expected.not_to exist }

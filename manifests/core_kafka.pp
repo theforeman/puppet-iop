@@ -31,7 +31,7 @@ class iop::core_kafka (
   }
 
   podman::volume { 'iop-core-kafka-data':
-    ensure => 'present',
+    ensure => $ensure,
   }
 
   podman::quadlet { 'iop-core-kafka':
@@ -40,7 +40,6 @@ class iop::core_kafka (
     user         => 'root',
     defaults     => {},
     require      => [
-      Podman::Volume['iop-core-kafka-data'],
       Podman::Network['iop-core-network'],
     ],
     settings     => {
@@ -73,6 +72,12 @@ class iop::core_kafka (
         'WantedBy' => ['multi-user.target', 'default.target'],
       },
     },
+  }
+
+  if $ensure == 'present' {
+    Podman::Volume['iop-core-kafka-data'] ~> Podman::Quadlet['iop-core-kafka']
+  } else {
+    Podman::Quadlet['iop-core-kafka'] -> Podman::Volume['iop-core-kafka-data']
   }
 
   if $ensure == 'present' {

@@ -94,7 +94,7 @@ class iop::service_vmaas (
   }
 
   podman::volume { 'iop-service-vmaas-data':
-    ensure => 'present',
+    ensure => $ensure,
   }
 
   podman::quadlet { 'iop-service-vmaas-reposcan':
@@ -104,7 +104,6 @@ class iop::service_vmaas (
     defaults     => {},
     require      => [
       Podman::Network['iop-core-network'],
-      Podman::Volume['iop-service-vmaas-data'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [
@@ -157,6 +156,12 @@ class iop::service_vmaas (
         'WantedBy' => ['multi-user.target', 'default.target'],
       },
     },
+  }
+
+  if $ensure == 'present' {
+    Podman::Volume['iop-service-vmaas-data'] ~> Podman::Quadlet['iop-service-vmaas-reposcan']
+  } else {
+    Podman::Quadlet['iop-service-vmaas-reposcan'] -> Podman::Volume['iop-service-vmaas-data']
   }
 
   podman::quadlet { 'iop-service-vmaas-webapp-go':

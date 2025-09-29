@@ -69,5 +69,10 @@ describe 'basic installation' do
       its(:exit_status) { should eq 1 }
       its(:stdout) { should be_empty }
     end
+
+    describe command('podman volume ls --format "{{.Name}}" | grep "^iop-service-vmaas-"') do
+      its(:exit_status) { should eq 1 }
+      its(:stdout) { should be_empty }
+    end
   end
 end
