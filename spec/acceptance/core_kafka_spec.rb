@@ -46,5 +46,10 @@ describe 'basic installation' do
     describe file('/etc/containers/systemd/iop-core-kafka.container') do
       it { is_expected.not_to exist }
     end
+
+    describe command('podman volume ls --format "{{.Name}}" | grep "^iop-core-kafka-"') do
+      its(:exit_status) { should eq 1 }
+      its(:stdout) { should be_empty }
+    end
   end
 end
