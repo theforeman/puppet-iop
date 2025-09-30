@@ -44,15 +44,15 @@ describe 'basic installation' do
       its(:exit_status) { should eq 0 }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
+    describe command('podman run --rm --network=iop-core-network quay.io/iop/puptoo curl http://iop-core-puptoo:8000/metrics') do
       its(:exit_status) { should eq 0 }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/yuptoo curl http://iop-core-yuptoo:5005/') do
+    describe command('podman run --rm --network=iop-core-network quay.io/iop/yuptoo curl http://iop-core-yuptoo:5005/') do
       its(:exit_status) { should eq 0 }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/ingress curl http://iop-core-ingress:8080/') do
+    describe command('podman run --rm --network=iop-core-network quay.io/iop/ingress curl http://iop-core-ingress:8080/') do
       its(:exit_status) { should eq 0 }
     end
 
@@ -60,7 +60,7 @@ describe 'basic installation' do
       its(:exit_status) { should eq 0 }
     end
 
-    describe command('podman run --network=iop-core-network quay.io/iop/host-inventory:latest curl http://iop-core-host-inventory:9126/') do
+    describe command('podman run --rm --network=iop-core-network quay.io/iop/host-inventory:latest curl http://iop-core-host-inventory:9126/') do
       its(:exit_status) { should eq 0 }
     end
 
@@ -115,23 +115,23 @@ describe 'basic installation' do
       its(:stdout) { should match /200/ }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/puptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-puptoo:8000/metrics") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/puptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-puptoo:8000/metrics") do
       its(:stdout) { should match /200/ }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/yuptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-yuptoo:5005/") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/yuptoo curl -s -o /dev/null -w '%{http_code}' http://iop-core-yuptoo:5005/") do
       its(:stdout) { should match /200/ }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/ingress curl -s -o /dev/null -w '%{http_code}' http://iop-core-ingress:8080/") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/ingress curl -s -o /dev/null -w '%{http_code}' http://iop-core-ingress:8080/") do
       its(:stdout) { should match /200/ }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/host-inventory:latest curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory:9126/") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/host-inventory:latest curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory:9126/") do
       its(:stdout) { should match /200/ }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/host-inventory curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory-api:8081/health") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/host-inventory curl -s -o /dev/null -w '%{http_code}' http://iop-core-host-inventory-api:8081/health") do
       its(:stdout) { should match /200/ }
     end
 
