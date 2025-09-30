@@ -13,13 +13,25 @@ Puppet::Type.newtype(:iop_frontend) do
     end
   end
 
-  newparam(:image) do
+  newproperty(:image) do
     desc 'The full name of the container image to pull, including the tag (e.g., "registry.example.com/my-app:latest").'
 
     validate do |value|
       unless value.is_a?(String)
         raise ArgumentError, "Image must be a string, not '#{value.class}'"
       end
+    end
+
+    def content_checksum
+      provider.content_checksum.to_s
+    end
+
+    def should_to_s(newvalue)
+      self.class.format_value_for_display(content_checksum)
+    end
+
+    def insync?(is)
+      is.to_s == content_checksum
     end
   end
 
