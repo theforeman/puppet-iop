@@ -12,21 +12,15 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
   commands runtime: 'podman'
 
   def exists?
-    desired_checksum = get_image_content_checksum
+    File.exist?(metadata_file)
+  end
 
-    unless File.directory?(resource[:destination])
-      Puppet.debug("Destination #{resource[:destination]} not found. Resource does not exist.")
-      return false
-    end
+  def image
+    get_deployed_checksum.to_s
+  end
 
-    current_checksum = get_deployed_checksum
-
-    in_sync = current_checksum == desired_checksum
-    Puppet.debug("Current checksum: #{current_checksum}, Desired checksum: #{desired_checksum}. In sync: #{in_sync}")
-
-    cleanup(nil, @staged_content_path) if in_sync
-
-    in_sync
+  def image=(value)
+    create
   end
 
   def create
@@ -34,18 +28,15 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     destroy if File.directory?(resource[:destination])
 
-    Puppet.debug("Copying staged content from '#{@staged_content_path}' to '#{resource[:destination]}'")
+    staged_content_path, new_content_checksum = stage_content
+    Puppet.debug("Copying staged content from '#{staged_content_path}' to '#{resource[:destination]}'")
     Dir.mkdir(resource[:destination], 0755)
-    FileUtils.cp_r(Dir.glob(File.join(@staged_content_path, '*')), resource[:destination])
+    FileUtils.cp_r(Dir.glob(File.join(staged_content_path, '*')), resource[:destination])
 
     restore_selinux_context(resource[:destination])
 
-    metadata_file = File.join(resource[:destination], '.iop_frontend_checksum')
-    Puppet.debug("Writing new checksum #{@new_content_checksum} to #{metadata_file}")
-    File.write(metadata_file, @new_content_checksum)
-
-    @staged_content_path = nil
-    @new_content_checksum = nil
+    Puppet.debug("Writing new checksum #{new_content_checksum} to #{metadata_file}")
+    File.write(metadata_file, new_content_checksum)
   end
 
   def destroy
@@ -53,18 +44,24 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
     FileUtils.rm_rf(resource[:destination])
   end
 
+  def content_checksum
+    path, checksum = stage_content
+    checksum
+  end
+
   private
 
+  def metadata_file
+    File.join(resource[:destination], '.iop_frontend_checksum')
+  end
+
   def get_deployed_checksum
-    metadata_file = File.join(resource[:destination], '.iop_frontend_checksum')
     return nil unless File.exist?(metadata_file)
 
     File.read(metadata_file).strip
   end
 
-  def get_image_content_checksum
-    return @new_content_checksum if @new_content_checksum
-
+  def stage_content
     temp_container_name = "iop-frontend-checker-#{resource.title.gsub(/[^0-9a-zA-Z]/, '-')}"
     staging_dir = Dir.mktmpdir('iop_frontend_check')
 
@@ -73,10 +70,10 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
       source_in_container = "#{temp_container_name}:#{resource[:source_path]}/."
       execute(['podman', 'cp', source_in_container, staging_dir])
 
-      @new_content_checksum = calculate_checksum_for_path(staging_dir)
-      @staged_content_path = staging_dir
+      new_content_checksum = calculate_checksum_for_path(staging_dir)
+      staged_content_path = staging_dir
 
-      return @new_content_checksum
+      return staged_content_path, new_content_checksum
     rescue Puppet::ExecutionFailure => e
       Puppet.err("Failed to get content checksum from image '#{resource[:image]}': #{e.message}")
       cleanup(temp_container_name, staging_dir)
