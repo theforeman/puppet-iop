@@ -70,6 +70,7 @@ class iop (
   String[1] $remediations_database_user = 'remediations_user',
   String[1] $remediations_database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
 ) inherits iop::params {
+  class { 'iop::core_network': ensure => $ensure }
   class { 'iop::core_kafka': ensure => $ensure }
   class { 'iop::core_ingress': ensure => $ensure }
   class { 'iop::core_puptoo': ensure => $ensure }

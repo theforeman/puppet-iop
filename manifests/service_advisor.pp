@@ -30,7 +30,7 @@ class iop::service_advisor (
   include podman
   include iop::database
   include iop::core_kafka
-  require iop::core_network
+  include iop::core_network
   include iop::core_host_inventory
 
   $service_name = 'iop-service-advisor-backend'
@@ -104,7 +104,6 @@ class iop::service_advisor (
     quadlet_type => 'container',
     user         => 'root',
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [
@@ -164,7 +163,6 @@ class iop::service_advisor (
     quadlet_type => 'container',
     user         => 'root',
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [

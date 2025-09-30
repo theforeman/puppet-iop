@@ -20,7 +20,7 @@ class iop::core_engine (
   ],
 ) {
   include podman
-  require iop::core_network
+  include iop::core_network
   require iop::core_ingress
   require iop::core_puptoo
 
@@ -44,9 +44,6 @@ class iop::core_engine (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => [
-      Podman::Network['iop-core-network'],
-    ],
     subscribe    => [
       Podman::Secret[$config_secret_name],
     ],
