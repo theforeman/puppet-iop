@@ -245,6 +245,12 @@ describe 'basic installation' do
       its(:stdout) { should match /^0$/ }
     end
 
+    # Containers should be removed
+    describe command('podman ps --all --format "{{.Names}}" | grep "^iop-"') do
+      its(:stdout) { should be_empty }
+      its(:exit_status) { should eq 1 }
+    end
+
     # Secrets should be cleaned up
     describe command('podman secret ls --format "{{.Name}}" | grep "^iop-" | wc -l') do
       its(:stdout) { should match /^0$/ }
