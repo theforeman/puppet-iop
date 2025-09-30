@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/theforeman/puppet-iop/tree/0.5.0) (2025-09-30)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.4.0...0.5.0)
+
+**Implemented enhancements:**
+
+- purge volumes and networks when ensuring absent [\#74](https://github.com/theforeman/puppet-iop/pull/74) ([evgeni](https://github.com/evgeni))
+- Add parameter to ensure all services absent [\#72](https://github.com/theforeman/puppet-iop/pull/72) ([ehelms](https://github.com/ehelms))
+
+**Fixed bugs:**
+
+- cleanup kafka-init containers [\#75](https://github.com/theforeman/puppet-iop/pull/75) ([evgeni](https://github.com/evgeni))
+- Use exec instead of Exec [\#73](https://github.com/theforeman/puppet-iop/pull/73) ([ehelms](https://github.com/ehelms))
+
 ## [0.4.0](https://github.com/theforeman/puppet-iop/tree/0.4.0) (2025-09-23)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.3.0...0.4.0)
