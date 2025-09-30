@@ -26,7 +26,7 @@ describe 'basic installation' do
       it { is_expected.to be_enabled }
     end
 
-    describe command("podman run --network=iop-core-network quay.io/iop/ingress curl -s -o /dev/null -w '%{http_code}' http://iop-core-ingress:8080/") do
+    describe command("podman run --rm --network=iop-core-network quay.io/iop/ingress curl -s -o /dev/null -w '%{http_code}' http://iop-core-ingress:8080/") do
       its(:stdout) { should match /200/ }
     end
   end
