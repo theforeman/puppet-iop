@@ -30,7 +30,7 @@ class iop::service_remediations (
   include podman
   include iop::database
   include iop::core_kafka
-  require iop::core_network
+  include iop::core_network
   include iop::core_host_inventory
   include iop::service_advisor
 
@@ -91,7 +91,6 @@ class iop::service_remediations (
     quadlet_type => 'container',
     user         => 'root',
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [

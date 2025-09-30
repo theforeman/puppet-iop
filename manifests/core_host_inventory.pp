@@ -28,7 +28,7 @@ class iop::core_host_inventory (
   Stdlib::Port $database_port = 5432,
 ) inherits iop::params {
   include podman
-  require iop::core_network
+  include iop::core_network
   include iop::core_kafka
   include iop::database
 
@@ -137,7 +137,6 @@ class iop::core_host_inventory (
     user         => 'root',
     defaults     => {},
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [
@@ -183,7 +182,6 @@ class iop::core_host_inventory (
     user         => 'root',
     defaults     => {},
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [
@@ -233,7 +231,6 @@ class iop::core_host_inventory (
     user         => 'root',
     defaults     => {},
     require      => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe    => [
@@ -283,7 +280,6 @@ class iop::core_host_inventory (
     user           => 'root',
     service_ensure => 'stopped',
     require        => [
-      Podman::Network['iop-core-network'],
       Postgresql::Server::Db[$database_name],
     ],
     subscribe      => [

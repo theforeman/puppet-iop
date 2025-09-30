@@ -13,7 +13,7 @@ class iop::core_kafka (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
-  require iop::core_network
+  include iop::core_network
 
   podman::secret { 'iop-core-kafka-init-start':
     ensure => $ensure,
@@ -39,9 +39,6 @@ class iop::core_kafka (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => [
-      Podman::Network['iop-core-network'],
-    ],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Kafka Container',

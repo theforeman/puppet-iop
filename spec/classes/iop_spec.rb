@@ -36,6 +36,7 @@ describe 'iop' do
         end
 
         it { should compile.with_all_deps }
+        it { should contain_class('iop::core_network').with_ensure('absent') }
         it { should contain_class('iop::core_kafka').with_ensure('absent') }
         it { should contain_class('iop::core_ingress').with_ensure('absent') }
         it { should contain_class('iop::core_puptoo').with_ensure('absent') }

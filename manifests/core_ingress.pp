@@ -14,16 +14,13 @@ class iop::core_ingress (
 ) {
   include podman
   include iop::core_kafka
-  require iop::core_network
+  include iop::core_network
 
   podman::quadlet { 'iop-core-ingress':
     ensure       => $ensure,
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => [
-      Podman::Network['iop-core-network'],
-    ],
     settings     => {
       'Unit'      => {
         'Description' => 'IOP Core Ingress Container',

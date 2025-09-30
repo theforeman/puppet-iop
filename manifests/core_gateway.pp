@@ -16,7 +16,7 @@ class iop::core_gateway (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
-  require iop::core_network
+  include iop::core_network
   include certs::iop
 
   $service_name = 'iop-core-gateway'
@@ -72,9 +72,6 @@ class iop::core_gateway (
     quadlet_type => 'container',
     user         => 'root',
     defaults     => {},
-    require      => [
-      Podman::Network['iop-core-network'],
-    ],
     subscribe    => [
       Podman::Secret[$server_cert_secret_name],
       Podman::Secret[$server_key_secret_name],

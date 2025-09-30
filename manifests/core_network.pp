@@ -20,4 +20,10 @@ class iop::core_network (
     subnet  => $subnet,
     gateway => $gateway,
   }
+
+  if $ensure == 'present' {
+    Podman::Network['iop-core-network'] ~> Podman::Quadlet <| tag == 'iop' |>
+  } else {
+    Podman::Quadlet <| tag == 'iop' |> -> Podman::Network['iop-core-network']
+  }
 }
