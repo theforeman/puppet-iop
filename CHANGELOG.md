@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1](https://github.com/theforeman/puppet-iop/tree/0.5.1) (2025-10-01)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.0...0.5.1)
+
+**Fixed bugs:**
+
+- Fix iop\_frontend trying to pull image with ensure absent [\#77](https://github.com/theforeman/puppet-iop/pull/77) ([ehelms](https://github.com/ehelms))
+
 ## [0.5.0](https://github.com/theforeman/puppet-iop/tree/0.5.0) (2025-09-30)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.4.0...0.5.0)

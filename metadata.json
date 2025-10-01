@@ -1,6 +1,6 @@
 {
   "name": "theforeman-iop",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "theforeman",
   "summary": "IoP services config",
   "license": "GPL-3.0+",
