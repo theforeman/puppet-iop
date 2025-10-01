@@ -32,8 +32,11 @@ class iop::service_vmaas (
   include iop::core_kafka
   include iop::core_gateway
   include iop::database
-  include iop::cvemap_downloader
   include certs::iop
+
+  class { 'iop::cvemap_downloader':
+    ensure => $ensure,
+  }
 
   $service_name = 'iop-service-vmaas-reposcan'
   $client_ca_cert_secret_name = "${service_name}-client-ca-cert"

@@ -16,7 +16,6 @@ class iop::cvemap_downloader (
   String $timer_interval = '24h',
 ) {
   include iop::core_gateway
-  include iop::service_vmaas
 
   $script_path = '/usr/local/bin/iop-cvemap-download.sh'
   $basedir = '/var/www/html/pub'

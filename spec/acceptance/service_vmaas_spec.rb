@@ -34,6 +34,21 @@ describe 'basic installation' do
     describe command("podman run --rm --network=iop-core-network quay.io/iop/vmaas curl -s -o /dev/null -w '%{http_code}' http://iop-service-vmaas-reposcan:8000/healthz") do
       its(:stdout) { should match /200/ }
     end
+
+    describe service('iop-cvemap-download.timer') do
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
+    end
+
+    describe service('iop-cvemap-download.path') do
+      it { is_expected.to be_enabled }
+      it { is_expected.to be_running }
+    end
+
+    describe file('/usr/local/bin/iop-cvemap-download.sh') do
+      it { is_expected.to be_file }
+      it { is_expected.to be_executable }
+    end
   end
 
   context 'with ensure => absent' do
@@ -73,6 +88,32 @@ describe 'basic installation' do
     describe command('podman volume ls --format "{{.Name}}" | grep "^iop-service-vmaas-"') do
       its(:exit_status) { should eq 1 }
       its(:stdout) { should be_empty }
+    end
+
+    describe service('iop-cvemap-download.timer') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe service('iop-cvemap-download.path') do
+      it { is_expected.not_to be_running }
+      it { is_expected.not_to be_enabled }
+    end
+
+    describe file('/usr/local/bin/iop-cvemap-download.sh') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.service') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.timer') do
+      it { is_expected.not_to exist }
+    end
+
+    describe file('/etc/systemd/system/iop-cvemap-download.path') do
+      it { is_expected.not_to exist }
     end
   end
 end
