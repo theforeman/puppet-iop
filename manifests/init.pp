@@ -62,13 +62,13 @@ class iop (
   String[1] $vulnerability_database_password = $iop::params::vulnerability_database_password,
   String[1] $vmaas_database_name = 'vmaas_db',
   String[1] $vmaas_database_user = 'vmaas_admin',
-  String[1] $vmaas_database_password = extlib::cache_data('iop_cache_data', 'vmaas_db_password', extlib::random_password(32)),
+  String[1] $vmaas_database_password = $iop::params::vmaas_database_password,
   String[1] $advisor_database_name = 'advisor_db',
   String[1] $advisor_database_user = 'advisor_user',
-  String[1] $advisor_database_password = extlib::cache_data('iop_cache_data', 'advisor_db_password', extlib::random_password(32)),
+  String[1] $advisor_database_password = $iop::params::advisor_database_password,
   String[1] $remediations_database_name = 'remediations_db',
   String[1] $remediations_database_user = 'remediations_user',
-  String[1] $remediations_database_password = extlib::cache_data('iop_cache_data', 'remediations_db_password', extlib::random_password(32)),
+  String[1] $remediations_database_password = $iop::params::remediations_database_password,
 ) inherits iop::params {
   class { 'iop::core_network': ensure => $ensure }
   class { 'iop::core_kafka': ensure => $ensure }
