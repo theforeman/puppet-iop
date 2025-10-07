@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.2](https://github.com/theforeman/puppet-iop/tree/0.5.2) (2025-10-07)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.1...0.5.2)
+
+**Fixed bugs:**
+
+- correct loading of passwords for vmaas/advisor/remiditations DBs [\#80](https://github.com/theforeman/puppet-iop/pull/80) ([evgeni](https://github.com/evgeni))
+- Ensure cvemap downloader is removed if set to absent [\#79](https://github.com/theforeman/puppet-iop/pull/79) ([ehelms](https://github.com/ehelms))
+
 ## [0.5.1](https://github.com/theforeman/puppet-iop/tree/0.5.1) (2025-10-01)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.0...0.5.1)
