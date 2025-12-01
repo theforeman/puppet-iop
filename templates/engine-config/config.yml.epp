@@ -34,3 +34,17 @@ service:
       topic: platform.engine.results
   downloader:
     name: "insights_messaging.downloaders.httpfs.Http"
+  logging_configurator:
+    name: insights_kafka_service.log_configurator.configure_logging
+  logging:
+    version: 1
+    disable_existing_loggers: false
+    loggers:
+      insights.core.dr:
+        level: "ERROR"
+      insights_messaging:
+        level: "INFO"
+      insights_kafka_service:
+        level: "INFO"
+      "":
+        level: "INFO"
