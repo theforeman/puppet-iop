@@ -1,6 +1,14 @@
 # Changelog
 
-## [0.5.2](https://github.com/theforeman/puppet-iop/tree/0.5.2) (2025-10-07)
+## [0.5.3](https://github.com/theforeman/puppet-iop/tree/0.5.3) (2025-12-08)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.2...0.5.3)
+
+**Fixed bugs:**
+
+- Set engine to use info log level [\#82](https://github.com/theforeman/puppet-iop/pull/82) ([dkuc](https://github.com/dkuc))
+
+## [0.5.2](https://github.com/theforeman/puppet-iop/tree/0.5.2) (2025-10-08)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.1...0.5.2)
 
