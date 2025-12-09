@@ -201,7 +201,7 @@ class iop::core_host_inventory (
         'Image'         => $image,
         'ContainerName' => 'iop-core-host-inventory',
         'Network'       => 'iop-core-network',
-        'Exec'          => 'make run_inv_mq_service',
+        'Exec'          => './inv_mq_service.py',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
           'USE_SUBMAN_ID=true',
