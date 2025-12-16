@@ -9,7 +9,7 @@
 # $ensure:: Ensure frontend assets are present or absent
 #
 class iop::service_advisor_frontend (
-  String[1] $image = 'quay.io/iop/advisor-frontend:latest',
+  String[1] $image = 'quay.io/iop/advisor-frontend:foreman-3.16',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman

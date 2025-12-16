@@ -11,7 +11,7 @@
 # $packages:: Array of packages to configure in the engine config
 #
 class iop::core_engine (
-  String[1] $image = 'quay.io/iop/insights-engine:latest',
+  String[1] $image = 'quay.io/iop/insights-engine:foreman-3.16',
   Enum['present', 'absent'] $ensure = 'present',
   Array[String] $packages = [
     'insights.specs.default',

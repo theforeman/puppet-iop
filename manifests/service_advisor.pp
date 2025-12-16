@@ -19,7 +19,7 @@
 # $database_port:: Port for the advisor database
 #
 class iop::service_advisor (
-  String[1] $image = 'quay.io/iop/advisor-backend:latest',
+  String[1] $image = 'quay.io/iop/advisor-backend:foreman-3.16',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'advisor_db',
   String[1] $database_user = 'advisor_user',

@@ -19,7 +19,7 @@
 # $database_port:: Port for the vmaas database
 #
 class iop::service_vmaas (
-  String[1] $image = 'quay.io/iop/vmaas:latest',
+  String[1] $image = 'quay.io/iop/vmaas:foreman-3.16',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_user = 'vmaas_admin',
   String[1] $database_name = 'vmaas_db',
