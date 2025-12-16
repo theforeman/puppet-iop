@@ -9,7 +9,7 @@
 # $ensure:: Ensure service is present or absent
 #
 class iop::core_yuptoo (
-  String[1] $image = 'quay.io/iop/yuptoo:latest',
+  String[1] $image = 'quay.io/iop/yuptoo:foreman-3.16',
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
