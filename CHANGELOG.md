@@ -1,6 +1,24 @@
 # Changelog
 
-## [0.5.3](https://github.com/theforeman/puppet-iop/tree/0.5.3) (2025-12-08)
+## [0.6.0](https://github.com/theforeman/puppet-iop/tree/0.6.0) (2026-01-28)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.3...0.6.0)
+
+**Breaking changes:**
+
+- Drop support for Puppet 7 [\#88](https://github.com/theforeman/puppet-iop/pull/88) ([evgeni](https://github.com/evgeni))
+
+**Implemented enhancements:**
+
+- Add support for OpenVox [\#89](https://github.com/theforeman/puppet-iop/pull/89) ([evgeni](https://github.com/evgeni))
+- Use foreman-3.16 tag instead of latest [\#86](https://github.com/theforeman/puppet-iop/pull/86) ([ehelms](https://github.com/ehelms))
+- Automatically cleanup insights-archives after 24 hours [\#85](https://github.com/theforeman/puppet-iop/pull/85) ([dkuc](https://github.com/dkuc))
+
+**Fixed bugs:**
+
+- Decrease Inventory logging to INFO level [\#84](https://github.com/theforeman/puppet-iop/pull/84) ([dkuc](https://github.com/dkuc))
+
+## [0.5.3](https://github.com/theforeman/puppet-iop/tree/0.5.3) (2025-12-09)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.2...0.5.3)
 
