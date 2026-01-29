@@ -78,6 +78,40 @@ describe 'iop' do
         it { should contain_class('iop::service_remediations') }
         it { should_not contain_foreman_smartproxy('iop-gateway') }
       end
+
+      describe 'with custom core engine log levels' do
+        let :params do
+          {
+            register_as_smartproxy: false,
+            core_engine_log_level_insights_core_dr: 'DEBUG',
+            core_engine_log_level_insights_messaging: 'WARNING',
+            core_engine_log_level_insights_kafka_service: 'ERROR',
+            core_engine_log_level_root: 'CRITICAL',
+          }
+        end
+
+        it { should compile.with_all_deps }
+
+        it 'should pass log levels to core_engine class' do
+          should contain_class('iop::core_engine').with(
+            log_level_insights_core_dr: 'DEBUG',
+            log_level_insights_messaging: 'WARNING',
+            log_level_insights_kafka_service: 'ERROR',
+            log_level_root: 'CRITICAL'
+          )
+        end
+      end
+
+      describe 'with invalid core engine log level' do
+        let :params do
+          {
+            register_as_smartproxy: false,
+            core_engine_log_level_root: 'INVALID',
+          }
+        end
+
+        it { should_not compile }
+      end
     end
   end
 end
