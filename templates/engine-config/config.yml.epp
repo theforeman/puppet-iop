@@ -1,5 +1,9 @@
 <%- |
   Array[String] $packages,
+  String $log_level_insights_core_dr,
+  String $log_level_insights_messaging,
+  String $log_level_insights_kafka_service,
+  String $log_level_root,
 | -%>
 plugins:
   default_component_enabled: true
@@ -41,10 +45,10 @@ service:
     disable_existing_loggers: false
     loggers:
       insights.core.dr:
-        level: "ERROR"
+        level: "<%= $log_level_insights_core_dr %>"
       insights_messaging:
-        level: "INFO"
+        level: "<%= $log_level_insights_messaging %>"
       insights_kafka_service:
-        level: "INFO"
+        level: "<%= $log_level_insights_kafka_service %>"
       "":
-        level: "INFO"
+        level: "<%= $log_level_root %>"

@@ -48,6 +48,16 @@
 #
 # $remediations_database_password:: Database password for remediations service
 #
+# === Core Engine parameters:
+#
+# $core_engine_log_level_insights_core_dr:: Log level for insights.core.dr logger
+#
+# $core_engine_log_level_insights_messaging:: Log level for insights_messaging logger
+#
+# $core_engine_log_level_insights_kafka_service:: Log level for insights_kafka_service logger
+#
+# $core_engine_log_level_root:: Log level for root logger
+#
 class iop (
   Enum['present', 'absent'] $ensure = 'present',
   Boolean $register_as_smartproxy = true,
@@ -69,13 +79,23 @@ class iop (
   String[1] $remediations_database_name = 'remediations_db',
   String[1] $remediations_database_user = 'remediations_user',
   String[1] $remediations_database_password = $iop::params::remediations_database_password,
+  Enum['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] $core_engine_log_level_insights_core_dr = 'ERROR',
+  Enum['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] $core_engine_log_level_insights_messaging = 'INFO',
+  Enum['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] $core_engine_log_level_insights_kafka_service = 'INFO',
+  Enum['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] $core_engine_log_level_root = 'INFO',
 ) inherits iop::params {
   class { 'iop::core_network': ensure => $ensure }
   class { 'iop::core_kafka': ensure => $ensure }
   class { 'iop::core_ingress': ensure => $ensure }
   class { 'iop::core_puptoo': ensure => $ensure }
   class { 'iop::core_yuptoo': ensure => $ensure }
-  class { 'iop::core_engine': ensure => $ensure }
+  class { 'iop::core_engine':
+    ensure                           => $ensure,
+    log_level_insights_core_dr       => $core_engine_log_level_insights_core_dr,
+    log_level_insights_messaging     => $core_engine_log_level_insights_messaging,
+    log_level_insights_kafka_service => $core_engine_log_level_insights_kafka_service,
+    log_level_root                   => $core_engine_log_level_root,
+  }
   class { 'iop::core_gateway': ensure => $ensure }
   class { 'iop::core_host_inventory':
     ensure            => $ensure,
