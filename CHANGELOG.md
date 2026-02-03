@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/theforeman/puppet-iop/tree/0.7.0) (2026-02-03)
+
+[Full Changelog]((https://github.com/theforeman/puppet-iop/compare/0.6.0...0.7.0)
+
+**Implemented enhancements:**
+
+- Add configurable log levels for core engine[\#90](https://github.com/theforeman/puppet-iop/pull/90) ([chris1984](https://github.com/chris1984)
+
 ## [0.6.0](https://github.com/theforeman/puppet-iop/tree/0.6.0) (2026-01-28)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.5.3...0.6.0)
