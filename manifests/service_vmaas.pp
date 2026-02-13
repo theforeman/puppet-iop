@@ -139,7 +139,7 @@ class iop::service_vmaas (
           'REDHAT_CVEMAP_URL=http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml',
         ],
         'Volume'        => $socket_volume + [
-          'iop-service-vmaas-data:/data',
+          'iop-service-vmaas-data:/data:rw',
         ],
         'Secret'        => [
           "${client_ca_cert_secret_name},target=/katello-server-ca.crt,mode=0440,type=mount",
