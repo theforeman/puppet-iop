@@ -19,7 +19,7 @@
 # $database_port:: Port for the inventory database
 #
 class iop::core_host_inventory (
-  String[1] $image = 'quay.io/iop/host-inventory:foreman-3.16',
+  String[1] $image = 'quay.io/iop/host-inventory:foreman-3.18',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_password = $iop::params::inventory_database_password,
   String[1] $database_user = 'inventory_user',

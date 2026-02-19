@@ -19,7 +19,7 @@
 # $database_port:: Port for the remediations database
 #
 class iop::service_remediations (
-  String[1] $image = 'quay.io/iop/remediations:foreman-3.16',
+  String[1] $image = 'quay.io/iop/remediations:foreman-3.18',
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $database_name = 'remediations_db',
   String[1] $database_user = 'remediations_user',

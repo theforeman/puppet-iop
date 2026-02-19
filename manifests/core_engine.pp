@@ -19,7 +19,7 @@
 # $log_level_root::                 Log level for root logger
 #
 class iop::core_engine (
-  String[1] $image = 'quay.io/iop/insights-engine:foreman-3.16',
+  String[1] $image = 'quay.io/iop/insights-engine:foreman-3.18',
   Enum['present', 'absent'] $ensure = 'present',
   Array[String] $packages = [
     'insights.specs.default',
