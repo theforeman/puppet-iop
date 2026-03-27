@@ -92,6 +92,7 @@ class iop::service_advisor (
     remote_database_name => $iop::core_host_inventory::database_name,
     remote_user          => $iop::core_host_inventory::database_user,
     remote_password      => $iop::core_host_inventory::database_password,
+    expected_columns     => $iop::core_host_inventory::remote_view_expected_columns,
     require              => [
       Postgresql::Server::Db[$database_name],
       Postgresql::Server::Schema['inventory'],
