@@ -100,6 +100,8 @@ class iop::core_host_inventory (
     owner => $database_user,
   }
 
+  $remote_view_expected_columns = "ARRAY['id','account','display_name','created','updated','stale_timestamp','stale_warning_timestamp','culled_timestamp','tags','system_profile','insights_id','reporter','per_reporter_staleness','org_id','groups','last_check_in']"
+
   $remote_view_command = @("EOM")
     CREATE OR REPLACE VIEW "inventory"."hosts" AS SELECT
       id,
@@ -124,7 +126,7 @@ class iop::core_host_inventory (
   postgresql_psql { 'create_or_replace_remote_view_inventory_hosts':
     db          => $database_name,
     command     => $remote_view_command,
-    unless      => "SELECT 1 FROM pg_views WHERE schemaname = 'inventory' AND viewname = 'hosts'",
+    unless      => "SELECT 1 FROM (SELECT array_agg(column_name::text ORDER BY ordinal_position) AS cols FROM information_schema.columns WHERE table_schema = 'inventory' AND table_name = 'hosts') sub WHERE cols = ${remote_view_expected_columns}",
     environment => $psql_env,
     require     => [
       Postgresql::Server::Schema['inventory'],

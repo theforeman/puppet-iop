@@ -25,6 +25,10 @@
 #
 # @param database_port The port for the remote database connection.
 #
+# @param expected_columns PostgreSQL array literal of expected column names in the remote hosts view.
+#   Stale foreign tables whose columns don't match are dropped and re-imported,
+#   and the local view is recreated to match.
+#
 define iop::postgresql_fdw (
   String $database_name,
   String $database_user,
@@ -32,6 +36,7 @@ define iop::postgresql_fdw (
   String $remote_database_name,
   String $remote_user,
   String $remote_password,
+  String $expected_columns,
   String $database_host = 'localhost',
   Stdlib::Port $database_port = 5432,
 ) {
@@ -96,6 +101,19 @@ define iop::postgresql_fdw (
     require => Postgresql::Server::Schema["${name}-inventory"],
   }
 
+  $columns_match_query = "SELECT 1 FROM (SELECT array_agg(column_name::text ORDER BY ordinal_position) AS cols FROM information_schema.columns WHERE table_schema = '%s' AND table_name = '${remote_table_name}') sub WHERE cols = ${expected_columns}"
+
+  postgresql_psql { "${name}-drop_stale_foreign_table":
+    db      => $database_name,
+    command => "DROP FOREIGN TABLE IF EXISTS \"${local_source_schema}\".\"${remote_table_name}\";",
+    onlyif  => "SELECT 1 FROM information_schema.foreign_tables WHERE foreign_table_schema = '${local_source_schema}' AND foreign_table_name = '${remote_table_name}' AND NOT EXISTS (${sprintf($columns_match_query, $local_source_schema)})",
+    require => [
+      Postgresql::Server::Schema["${name}-inventory_source"],
+      Postgresql_psql["${name}-create_user_mapping"],
+      Postgresql_psql["${name}-create_postgres_user_mapping"],
+    ],
+  }
+
   postgresql_psql { "${name}-import_foreign_table":
     db      => $database_name,
     command => "IMPORT FOREIGN SCHEMA \"${remote_table_schema}\" LIMIT TO (\"${remote_table_name}\") FROM SERVER ${foreign_server_name} INTO \"${local_source_schema}\";",
@@ -104,6 +122,7 @@ define iop::postgresql_fdw (
       Postgresql::Server::Schema["${name}-inventory_source"],
       Postgresql_psql["${name}-create_user_mapping"],
       Postgresql_psql["${name}-create_postgres_user_mapping"],
+      Postgresql_psql["${name}-drop_stale_foreign_table"],
     ],
   }
 
@@ -112,7 +131,7 @@ define iop::postgresql_fdw (
   postgresql_psql { "${name}-create_local_view":
     db          => $database_name,
     command     => $create_view_sql,
-    unless      => "SELECT 1 FROM pg_views WHERE schemaname = '${remote_table_schema}' AND viewname = '${remote_table_name}'",
+    unless      => sprintf($columns_match_query, $remote_table_schema),
     environment => $psql_env,
     require     => Postgresql_psql["${name}-import_foreign_table"],
   }
