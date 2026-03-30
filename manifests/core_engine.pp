@@ -76,6 +76,7 @@ class iop::core_engine (
         'ContainerName' => 'iop-core-engine',
         'Network'       => 'iop-core-network',
         'Exec'          => 'insights-core-engine /var/config.yml',
+        'Tmpfs'         => '/tmp:rw,size=2G,mode=1777',
         'Secret'        => [
           "${config_secret_name},target=/var/config.yml,mode=0440,uid=1000,type=mount",
         ],
