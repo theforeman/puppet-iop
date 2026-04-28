@@ -19,6 +19,7 @@ class iop::core_network (
     driver  => 'bridge',
     subnet  => $subnet,
     gateway => $gateway,
+    ipv6    => true,
   }
 
   if $ensure == 'present' {
