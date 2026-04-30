@@ -55,6 +55,10 @@ describe 'basic installation' do
       it { is_expected.to be_directory }
       it { should be_mode 755 }
     end
+
+    describe curl_command("http://#{host_inventory['fqdn']}/assets/apps/inventory/fed-mods.json") do
+      its(:response_code) { should eq 200 }
+    end
   end
 
   context 'with ensure => absent' do
