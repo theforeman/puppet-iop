@@ -30,8 +30,12 @@ Puppet::Type.type(:iop_frontend).provide(:shell) do
 
     staged_content_path, new_content_checksum = stage_content
     Puppet.debug("Copying staged content from '#{staged_content_path}' to '#{resource[:destination]}'")
-    Dir.mkdir(resource[:destination], 0755)
-    FileUtils.cp_r(Dir.glob(File.join(staged_content_path, '*')), resource[:destination])
+    # Ensure umask is 0022, as mkdir and cp_r respect umask and might strip permissions httpd needs to serve the files
+    # Will be restored to the original value once the file operations are done
+    Puppet::Util.withumask(0022) do
+      Dir.mkdir(resource[:destination], 0755)
+      FileUtils.cp_r(Dir.glob(File.join(staged_content_path, '*')), resource[:destination])
+    end
 
     restore_selinux_context(resource[:destination])
 

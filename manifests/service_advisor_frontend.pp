@@ -13,7 +13,7 @@ class iop::service_advisor_frontend (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
-  ensure_resource('file', '/var/lib/foreman/public/assets/apps', { 'ensure' => 'directory' })
+  ensure_resource('file', '/var/lib/foreman/public/assets/apps', { 'ensure' => 'directory', 'mode' => '0755' })
 
   podman::image { 'service_advisor_frontend':
     ensure   => $ensure,
