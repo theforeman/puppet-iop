@@ -23,6 +23,7 @@ def clean_test_environment
   on default, 'podman network rm iop-core-network --force'
   on default, 'dnf -y remove postgres*'
   on default, 'dnf -y remove foreman*'
+  on default, 'rm -rf /var/lib/foreman/public/assets/apps/'
 end
 
 Dir["./spec/support/acceptance/**/*.rb"].sort.each { |f| require f }
