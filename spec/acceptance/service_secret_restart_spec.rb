@@ -2,14 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'service restart on secret change' do
   before(:all) do
-    on default, 'systemctl stop iop-*'
-    on default, 'rm -rf /etc/containers/systemd/*'
-    on default, 'systemctl daemon-reload'
-    on default, 'podman rm --all --force'
-    on default, 'podman secret rm --all'
-    on default, 'podman network rm iop-core-network --force'
-    on default, 'dnf -y remove postgres*'
-    on default, 'dnf -y remove foreman*'
+    clean_test_environment
   end
 
   context 'VMAAS service with initial configuration' do

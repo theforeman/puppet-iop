@@ -14,4 +14,15 @@ configure_beaker(modules: :fixtures) do |host|
   end
 end
 
+def clean_test_environment
+  on default, 'systemctl stop iop-*'
+  on default, 'rm -rf /etc/containers/systemd/*'
+  on default, 'systemctl daemon-reload'
+  on default, 'podman rm --all --force'
+  on default, 'podman secret rm --all'
+  on default, 'podman network rm iop-core-network --force'
+  on default, 'dnf -y remove postgres*'
+  on default, 'dnf -y remove foreman*'
+end
+
 Dir["./spec/support/acceptance/**/*.rb"].sort.each { |f| require f }
