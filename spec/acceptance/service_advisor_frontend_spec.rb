@@ -57,6 +57,7 @@ describe 'basic installation' do
   context 'with restrictive umask' do
     before(:context) do
       on default, 'echo "umask 0077" > /etc/profile.d/strict_umask.sh'
+      on default, 'rm -rf /var/lib/foreman/public/assets/apps/'
     end
 
     after(:context) do
