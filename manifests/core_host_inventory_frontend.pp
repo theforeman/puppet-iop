@@ -13,7 +13,7 @@ class iop::core_host_inventory_frontend (
   Enum['present', 'absent'] $ensure = 'present',
 ) {
   include podman
-  ensure_resource('file', '/var/lib/foreman/public/assets/apps', { 'ensure' => 'directory' })
+  ensure_resource('file', '/var/lib/foreman/public/assets/apps', { 'ensure' => 'directory', 'mode' => '0755' })
 
   podman::image { 'core_host_inventory_frontend':
     ensure   => $ensure,
