@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/theforeman/puppet-iop/tree/0.8.0) (2026-05-11)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.7.0...0.8.0)
+
+**Implemented enhancements:**
+
+- feat\(FDW\): add last\_check\_in to HBI views [\#96](https://github.com/theforeman/puppet-iop/pull/96) ([RoamingNoMaD](https://github.com/RoamingNoMaD))
+- chore: update default image tags to foreman-3.18 [\#94](https://github.com/theforeman/puppet-iop/pull/94) ([vkrizan](https://github.com/vkrizan))
+
+**Fixed bugs:**
+
+- Fix deployment of frontend assets when running with strict umask [\#98](https://github.com/theforeman/puppet-iop/pull/98) ([evgeni](https://github.com/evgeni))
+
 ## [0.7.0](https://github.com/theforeman/puppet-iop/tree/0.7.0) (2026-02-03)
 
 [Full Changelog]((https://github.com/theforeman/puppet-iop/compare/0.6.0...0.7.0)
