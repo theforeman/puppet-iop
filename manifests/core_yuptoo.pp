@@ -29,6 +29,7 @@ class iop::core_yuptoo (
         'ContainerName' => 'iop-core-yuptoo',
         'Network'       => 'iop-core-network',
         'Exec'          => 'python -m main',
+        'Tmpfs'         => '/tmp:rw,size=2G,mode=1777',
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092',
           'BYPASS_PAYLOAD_EXPIRATION=true',
