@@ -53,7 +53,7 @@ class iop::core_kafka (
           'KAFKA_NODE_ID=1',
         ],
         'Volume'        => [
-          'iop-core-kafka-data:/var/lib/kafka/data',
+          'iop-core-kafka-data:/var/lib/kafka/data:rw',
         ],
         'Secret'        => [
           'iop-core-kafka-init-start,target=/opt/kafka/bin/init-start.sh',
