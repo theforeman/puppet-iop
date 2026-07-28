@@ -1,12 +1,24 @@
 # Changelog
 
+## [0.10.0](https://github.com/theforeman/puppet-iop/tree/0.10.0) (2026-07-28)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.9.0...0.10.0)
+
+**Implemented enhancements:**
+
+- puppet/extlib: Allow 8.x [\#103](https://github.com/theforeman/puppet-iop/pull/103) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- fix\(FDW\): update inventory view to match current HBI schema [\#104](https://github.com/theforeman/puppet-iop/pull/104) ([romanblanco](https://github.com/romanblanco))
+
 ## [0.9.0](https://github.com/theforeman/puppet-iop/tree/0.9.0) (2026-06-08)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.8.0...0.9.0)
 
 **Implemented enhancements:**
 
-- Enable ipv6 in core\_network ([pfreybur](https://github.com/pfreybur))
+- Enable IPv6 dual-stack networking for containers [\#97](https://github.com/theforeman/puppet-iop/pull/97) ([pfreyburg](https://github.com/pfreyburg))
 
 ## [0.8.0](https://github.com/theforeman/puppet-iop/tree/0.8.0) (2026-05-11)
 
@@ -21,13 +33,13 @@
 
 - Fix deployment of frontend assets when running with strict umask [\#98](https://github.com/theforeman/puppet-iop/pull/98) ([evgeni](https://github.com/evgeni))
 
-## [0.7.0](https://github.com/theforeman/puppet-iop/tree/0.7.0) (2026-02-03)
+## [0.7.0](https://github.com/theforeman/puppet-iop/tree/0.7.0) (2026-02-05)
 
-[Full Changelog]((https://github.com/theforeman/puppet-iop/compare/0.6.0...0.7.0)
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.6.0...0.7.0)
 
 **Implemented enhancements:**
 
-- Add configurable log levels for core engine[\#90](https://github.com/theforeman/puppet-iop/pull/90) ([chris1984](https://github.com/chris1984)
+- Add configurable log levels for core engine [\#90](https://github.com/theforeman/puppet-iop/pull/90) ([chris1984](https://github.com/chris1984))
 
 ## [0.6.0](https://github.com/theforeman/puppet-iop/tree/0.6.0) (2026-01-28)
 
