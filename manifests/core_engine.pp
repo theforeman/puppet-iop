@@ -43,11 +43,11 @@ class iop::core_engine (
   podman::secret { $config_secret_name:
     ensure => $ensure,
     secret => Sensitive(epp('iop/engine-config/config.yml.epp', {
-          'packages'                         => $packages,
-          'log_level_insights_core_dr'       => $log_level_insights_core_dr,
-          'log_level_insights_messaging'     => $log_level_insights_messaging,
-          'log_level_insights_kafka_service' => $log_level_insights_kafka_service,
-          'log_level_root'                   => $log_level_root,
+      'packages'                         => $packages,
+      'log_level_insights_core_dr'       => $log_level_insights_core_dr,
+      'log_level_insights_messaging'     => $log_level_insights_messaging,
+      'log_level_insights_kafka_service' => $log_level_insights_kafka_service,
+      'log_level_root'                   => $log_level_root,
     })),
     flags  => {
       label => [

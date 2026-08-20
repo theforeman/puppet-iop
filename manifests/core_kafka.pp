@@ -84,7 +84,7 @@ class iop::core_kafka (
       require => [
         Podman::Quadlet['iop-core-kafka'],
         Podman::Network['iop-core-network'],
-        Podman::Secret['iop-core-kafka-init']
+        Podman::Secret['iop-core-kafka-init'],
       ],
       path    => ['/usr/bin', '/usr/sbin'],
     }
