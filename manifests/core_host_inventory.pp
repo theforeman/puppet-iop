@@ -209,6 +209,9 @@ class iop::core_host_inventory (
         'Image'         => $image,
         'ContainerName' => 'iop-core-host-inventory',
         'Network'       => 'iop-core-network',
+        # Allow the worker to finish in-flight message processing and close its Kafka
+        # client before Podman escalates to SIGKILL (default container stop timeout is 10s).
+        'StopTimeout'   => '45',
         'Exec'          => './inv_mq_service.py',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=PLAINTEXT://iop-core-kafka:9092',
@@ -227,6 +230,7 @@ class iop::core_host_inventory (
       'Service'   => {
         'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
         'Restart'     => 'on-failure',
+        'SuccessExitStatus' => '143',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
@@ -257,6 +261,9 @@ class iop::core_host_inventory (
         'Image'         => $image,
         'ContainerName' => 'iop-core-host-inventory-api',
         'Network'       => 'iop-core-network',
+        # Must exceed gunicorn's graceful_timeout (30s) so workers drain before Podman
+        # escalates to SIGKILL (default container stop timeout is 10s).
+        'StopTimeout'   => '45',
         'Exec'          => 'python run_gunicorn.py',
         'Environment'   => [
           'KAFKA_BOOTSTRAP_SERVERS=iop-core-kafka:9092',
@@ -277,6 +284,7 @@ class iop::core_host_inventory (
       'Service'   => {
         'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
         'Restart'     => 'on-failure',
+        'SuccessExitStatus' => '143',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],

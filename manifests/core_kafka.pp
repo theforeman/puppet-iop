@@ -64,6 +64,7 @@ class iop::core_kafka (
       'Service'   => {
         'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
         'Restart'     => 'on-failure',
+        'SuccessExitStatus' => '143',
       },
       'Install'   => {
         'WantedBy' => ['multi-user.target', 'default.target'],
