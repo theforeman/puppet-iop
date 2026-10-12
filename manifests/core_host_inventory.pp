@@ -228,8 +228,8 @@ class iop::core_host_inventory (
         ],
       },
       'Service'   => {
-        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
-        'Restart'     => 'on-failure',
+        'Environment'       => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'           => 'on-failure',
         'SuccessExitStatus' => '143',
       },
       'Install'   => {
@@ -282,8 +282,8 @@ class iop::core_host_inventory (
         ],
       },
       'Service'   => {
-        'Environment' => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
-        'Restart'     => 'on-failure',
+        'Environment'       => 'REGISTRY_AUTH_FILE=/etc/foreman/registry-auth.json',
+        'Restart'           => 'on-failure',
         'SuccessExitStatus' => '143',
       },
       'Install'   => {
