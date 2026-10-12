@@ -45,6 +45,9 @@ class iop::core_ingress (
         'Image'         => $image,
         'ContainerName' => 'iop-core-ingress',
         'Network'       => 'iop-core-network',
+        # Give the bounded HTTP/telemetry shutdown (~10s in-app) headroom before Podman
+        # escalates to SIGKILL (default container stop timeout is 10s).
+        'StopTimeout'   => '20',
         'Volume'        => '/var/tmp/insights-archives:/var/tmp/insights-archives:rw,Z',
         'Environment'   => [
           'INGRESS_VALID_UPLOAD_TYPES=advisor,compliance,qpc,rhv,tower,leapp-reporting,xavier,playbook,playbook-sat,malware-detection,tasks',
