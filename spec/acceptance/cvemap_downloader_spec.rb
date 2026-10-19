@@ -67,6 +67,13 @@ describe 'iop::cvemap_downloader' do
     end
 
     describe file('/var/www/html/pub/iop/data/meta/v1/cvemap.xml') do
+      before(:all) do
+        # Wait for the asynchronous timer-triggered oneshot to finish. The
+        # service can fail after downloading if the reposync API is unavailable.
+        on default, 'systemctl start iop-cvemap-download.service || true'
+        on default, 'test -s /var/www/html/pub/iop/data/meta/v1/cvemap.xml'
+      end
+
       it { should exist }
       it { should be_file }
       it { should be_readable }
