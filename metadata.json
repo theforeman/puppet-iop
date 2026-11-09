@@ -1,6 +1,6 @@
 {
   "name": "theforeman-iop",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "author": "theforeman",
   "summary": "IoP services config",
   "license": "GPL-3.0+",
@@ -21,7 +21,7 @@
     },
     {
       "name": "katello/certs",
-      "version_requirement": ">= 21.0.0 < 22.0.0"
+      "version_requirement": ">= 21.0.0 < 23.0.0"
     },
     {
       "name": "theforeman/iop_advisor_engine",

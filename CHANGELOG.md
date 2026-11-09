@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/theforeman/puppet-iop/tree/0.11.0) (2026-11-09)
+
+[Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.10.0...0.11.0)
+
+**Implemented enhancements:**
+
+- Allow katello/certs 22.x.
+
+**Merged pull requests:**
+
+- set env DISABLE\_HOST\_CULLING for iop-host-inventory [\#107](https://github.com/theforeman/puppet-iop/pull/107) ([pfreyburg](https://github.com/pfreyburg))
+- update fdw in core\_host\_inventory.pp [\#106](https://github.com/theforeman/puppet-iop/pull/106) ([pfreyburg](https://github.com/pfreyburg))
+
 ## [0.10.0](https://github.com/theforeman/puppet-iop/tree/0.10.0) (2026-07-28)
 
 [Full Changelog](https://github.com/theforeman/puppet-iop/compare/0.9.0...0.10.0)
