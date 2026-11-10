@@ -28,7 +28,7 @@ class iop::core_ingress (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => "e /var/tmp/insights-archives - - - 24h\n",
+    content => "d /var/tmp/insights-archives 0755 1001 1001 24h\n",
   }
 
   podman::quadlet { 'iop-core-ingress':
