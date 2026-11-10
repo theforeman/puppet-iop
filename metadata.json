@@ -22,10 +22,6 @@
     {
       "name": "katello/certs",
       "version_requirement": ">= 21.0.0 < 23.0.0"
-    },
-    {
-      "name": "theforeman/iop_advisor_engine",
-      "version_requirement": ">= 0.0.1 < 1.0.0"
     }
   ],
   "requirements": [

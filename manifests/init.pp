@@ -162,8 +162,4 @@ class iop (
       ],
     }
   }
-
-  class { 'iop_advisor_engine':
-    ensure => 'absent',
-  }
 }
