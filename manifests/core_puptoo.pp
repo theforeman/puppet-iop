@@ -28,6 +28,7 @@ class iop::core_puptoo (
         'Image'         => $image,
         'ContainerName' => 'iop-core-puptoo',
         'Network'       => 'iop-core-network',
+        'Tmpfs'         => '/tmp:rw,size=2G,mode=1777',
         'Environment'   => [
           'BOOTSTRAP_SERVERS=iop-core-kafka:9092', # Assumes 'iop-core-kafka' is resolvable.
           'DISABLE_REDIS=True',
